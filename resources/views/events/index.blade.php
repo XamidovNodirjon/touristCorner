@@ -21,8 +21,8 @@
         .category-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin: 25px 0;
+            /* gap: 8px; */
+            /* margin: 25px 0; */
             justify-content: center;
         }
 
@@ -48,6 +48,7 @@
             color: #fff;
             border-color: #007bff;
         }
+        
     </style>
 </head>
 
@@ -139,10 +140,6 @@
                                     <i class="fas fa-map-marker-alt"></i>
                                     <span>{{ $event->location }}</span>
                                 </div>
-                                <div class="detail-item people">
-                                    <i class="fas fa-users"></i>
-                                    <span>{{ number_format($event->expected_attendees, 0, '', ',') }}+ expected</span>
-                                </div>
                             </div>
                             
                             <button class="card-button"
@@ -151,7 +148,7 @@
                                     '{{ $event->title_uz }}',
                                     '{{ $event->date }}',
                                     '{{ $event->location }}',
-                                    '{{ $event->description }}',
+                                    '{{ $event->description_uz }}',
                                     '{{ $event->image }}'
                                 )">
                                 <i class="fas fa-envelope"></i> Send Details
@@ -159,7 +156,7 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @endforeach  
         </div>
     @else
         <p class="text-muted">Hech qanday tadbir topilmadi.</p>
@@ -174,7 +171,7 @@
         </div>
         <div class="modal-body">
             <p><strong>Material:</strong> <span id="modalMaterialName"></span></p>
-            <p><strong>Hajmi:</strong> <span id="modalMaterialSize"></span></p>
+            <p><strong>Ma'lumot:</strong> <span id="modalMaterialDescription"></span></p>
 
             <div class="form-group">
                 <label for="emailInput">Email manzil</label>
@@ -224,11 +221,11 @@
     
         let selectedEvent = {};
 
-        function openEmailModal(id, title, date, location, description, image) {
-            selectedEvent = { id, title, date, location, description, image };
+        function openEmailModal(id, title, date, location, description_uz, image) {
+            selectedEvent = { id, title, date, location, description_uz, image };
 
             document.getElementById('modalMaterialName').textContent = title;
-            document.getElementById('modalMaterialSize').textContent = date + ' • ' + location;
+            document.getElementById('modalMaterialDescription').textContent = description_uz;
             document.getElementById('emailModal').classList.add('show');
             document.body.style.overflow = 'hidden';
         }
