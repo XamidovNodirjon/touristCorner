@@ -1,0 +1,316 @@
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f2f7fb;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-left i {
+    font-size: 28px;
+    color: #0066ff;
+}
+
+.header-left h1 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.main-content {
+    padding: 50px 8%;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 30px;
+}
+
+.event-card {
+    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-8px);
+}
+
+.event-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.event-body {
+    padding: 20px 25px 25px;
+}
+
+.featured-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.featured-badge i {
+    color: #ffcc00;
+}
+
+.event-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.event-description {
+    font-size: 14px;
+    color: rgba(255,255,255,0.9);
+    margin: 8px 0 15px;
+    line-height: 1.5;
+}
+
+.event-info {
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: rgba(255,255,255,0.9);
+}
+
+.event-info i {
+    margin-right: 8px;
+}
+
+.event-footer {
+    background: white;
+    color: #2563eb;
+    padding: 12px 20px;
+    border-radius: 0 0 16px 16px;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.event-footer:hover {
+    background: #f1f5ff;
+}
+    /* Asosiy Ranglar:
+     * #1C3F3A - Primary/Accent (To'q yashil)
+     * #FFFFFF - Background (Oq)
+     * #E0E9E9 - Light Background (Och kulrang/yashil)
+     * #EBE9DA - Alternative Light Background (Krem)
+     */
+
+    /* Umumiy stillar uchun font rangini o'zgartirish */
+    body {
+        font-family: 'Inter', sans-serif;
+        color: #1C3F3A; /* Asosiy rang */
+        background-color: #E0E9E9; /* Saytning orqa fon rangi */
+
+    }
+
+    /* Header stillarini yangi rangga moslash */
+    .header-bar {
+        background-color: #1C3F3A;
+        border-bottom: 1px solid #EBE9DA;
+    }
+    
+    .header-left h1 { color: #FFFFFF; }
+    .header-left p { color: #FFFFFF; }
+    .logo-icon i { color: #FFFFFF; }
+
+    .nav-link { color: #FFFFFF; }
+    .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background-color: #FFFFFF;
+    color: #1C3F3A;
+}
+
+    /* Page Header */
+    .page-header h2 { color: #1C3F3A; }
+    .page-header p { color: #1C3F3A; }
+
+    /* Category buttons */
+    .category-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 25px 0;
+        justify-content: center;
+    }
+
+    .category-button {
+        border: 1px solid #1C3F3A;
+        background: #FFFFFF;
+        padding: 10px 18px;
+        border-radius: 25px;
+        font-weight: 500;
+        color: #1C3F3A;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .category-button:hover {
+        background: #1C3F3A;
+        color: #FFFFFF;
+        border-color: #1C3F3A;
+    }
+
+    .category-button.active {
+        background: #1C3F3A;
+        color: #FFFFFF;
+        border-color: #1C3F3A;
+    }
+    
+    /* Yangi Card Stillari */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -15px;
+    }
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+    .card {
+        border: 1px solid #EBE9DA;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(28, 63, 58, 0.05); /* To'q yashil soya */
+        background-color: #FFFFFF;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        height: 100%;
+    }
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(28, 63, 58, 0.1);
+    }
+    .card-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    .card-content {
+        padding: 15px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .tag-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .tag {
+        background-color: #EBE9DA;
+        color: #1C3F3A;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    /* Maxsus teg ranglari (sizning ranglaringizga moslashtirilgan) */
+    .tag.festivals { background-color: #1C3F3A; color: #EBE9DA; }
+    .tag.cultural { background-color: #E0E9E9; color: #1C3F3A; }
+    .tag.exhibitions { background-color: #EBE9DA; color: #1C3F3A; }
+
+    .price {
+        font-weight: 700;
+        color: #1C3F3A;
+        font-size: 16px;
+    }
+    .card-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1C3F3A;
+        margin-bottom: 5px;
+    }
+    .card-description {
+        font-size: 14px;
+        color: #3f5d59; /* To'q yashilning ozgina o'chirilgan versiyasi */
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+    .card-details {
+        margin-top: auto;
+    }
+    .detail-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #3f5d59;
+        margin-bottom: 8px;
+    }
+    .detail-item i {
+        color: #1C3F3A; /* Ikonkalar ranggi */
+        margin-right: 10px;
+        width: 16px;
+        text-align: center;
+    }
+    .detail-item.people i {
+        color: #1C3F3A; /* Boshqa ikonkalar ranggi */
+    }
+    .card-button {
+        width: 100%;
+        padding: 10px;
+        background-color: #1C3F3A;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 15px;
+        transition: background-color 0.2s ease;
+    }
+    .card-button:hover {
+        background-color: #3f5d59; /* To'q yashilning sal ochrog'i */
+    }
+
+    /* Modal stillarini yangilash */
+    .modal-header h3 { color: #1C3F3A; }
+    .btn-primary { background-color: #1C3F3A; border-color: #1C3F3A; }
+    .btn-primary:hover { background-color: #3f5d59; border-color: #3f5d59; }
+    .btn-secondary { color: #1C3F3A; border-color: #1C3F3A; }
+    .btn-secondary:hover { background-color: #E0E9E9; }

@@ -1,0 +1,360 @@
+:root {
+    --primary-blue: #1C3F7A;
+    --light-blue: #33599C;
+    --accent-yellow: #FFB700;
+    --bg-light-gray: #f8f9fa;
+    --footer-bg: #11264a;
+    --text-dark: #212529;
+    --text-light: #6c757d;
+    --text-white-secondary: rgba(255, 255, 255, 0.7);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background-color: #ffffff;
+    color: var(--text-dark);
+}
+
+/* ===================== HEADER STYLES ===================== */
+.header-bar {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 15px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+.logo-text h1 {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.2;
+}
+.logo-text p {
+    font-size: 13px;
+    margin: 0;
+    opacity: 0.8;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-link {
+    background-color: var(--light-blue);
+    color: white;
+    padding: 12px 24px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.nav-link:hover {
+    background-color: #4a6fa8;
+    transform: translateY(-2px);
+}
+.nav-link.active {
+    background-color: var(--accent-yellow);
+    color: var(--primary-blue);
+}
+.nav-link i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* ===================== LANGUAGE SWITCHER ===================== */
+.language-switcher {
+    position: relative;
+}
+.lang-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--light-blue);
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.lang-select:hover {
+    background-color: #4a6fa8;
+}
+.lang-select .flag {
+    width: 24px;
+    height: 18px;
+    border-radius: 3px;
+}
+.lang-select span {
+    font-weight: 600;
+    font-size: 14px;
+}
+.lang-dropdown {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    list-style: none;
+    padding: 5px;
+    margin: 0;
+    width: 150px;
+    z-index: 10;
+    display: none;
+}
+.lang-dropdown.show {
+    display: block;
+}
+.lang-dropdown li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--text-dark);
+}
+.lang-dropdown li:hover {
+    background-color: var(--bg-light-gray);
+}
+
+
+/* ===================== JOURNEY SECTION STYLES ===================== */
+.journey-section {
+    padding: 80px 50px;
+    background-color: var(--bg-light-gray);
+    text-align: center;
+}
+.section-header h2 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.section-header p {
+    font-size: 18px;
+    color: var(--text-light);
+    max-width: 600px;
+    margin: 0 auto 50px auto;
+}
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative; /* Animatsiya uchun zarur */
+}
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover bo'lganda tezlikni oshirish yoki biroz o'zgartirish */
+.card:hover .card-animation-plane {
+    animation-duration: 6s; /* Tezroq uchish */
+    color: var(--primary-blue); /* Hoverda rangni ko'kka o'zgartiramiz */
+}
+
+.card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.card-content {
+    padding: 40px 25px 25px 25px;
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    position: absolute;
+    top: 0;
+    left: 25px;
+    transform: translateY(-50%);
+    border: 4px solid #ffffff;
+}
+.icon-green { background-color: #1abc9c; }
+.icon-purple { background-color: #9b59b6; }
+.icon-orange { background-color: #e67e22; }
+.card-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 15px 0 10px 0;
+}
+.card-content p {
+    font-size: 15px;
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+.card-link {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: color 0.3s;
+}
+.card-link:hover { color: var(--accent-yellow); }
+
+/* ===================== FOOTER STYLES ===================== */
+.site-footer {
+    background-color: var(--footer-bg);
+    color: #fff;
+    padding: 60px 50px 20px 50px;
+}
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.footer-column h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.footer-column p, .footer-column a {
+    color: var(--text-white-secondary);
+    font-size: 14px;
+    text-decoration: none;
+    line-height: 1.8;
+}
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+.footer-column ul a:hover {
+    color: #fff;
+}
+.login-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--accent-yellow);
+    color: var(--primary-blue);
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.login-form button:hover {
+    background-color: #ffca28;
+}
+.footer-bottom {
+    max-width: 1200px;
+    margin: 20px auto 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.footer-bottom p {
+    font-size: 13px;
+    color: var(--text-white-secondary);
+    margin: 0;
+}
+.social-links a {
+    color: var(--text-white-secondary);
+    font-size: 18px;
+    margin-left: 15px;
+    transition: color 0.3s;
+}
+.social-links a:hover {
+    color: #fff;
+}
+
+
+/* ===================== RESPONSIVE STYLES ===================== */
+@media (max-width: 992px) {
+    .header-bar {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .journey-section {
+        padding: 60px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+    }
+    .nav-link { justify-content: center; }
+    .section-header h2 { font-size: 28px; }
+    .section-header p { font-size: 16px; }
+    .footer-bottom { justify-content: center; text-align: center; }
+}
+
