@@ -25,4 +25,9 @@ return [
     'Events & Activities - Welcome to Uzbekistan' => 'Tadbirlar va faoliyatlar - Oʻzbekistonga xush kelibsiz',
     'Send Details' => 'Tafsilotlarni yuborish',
     'No events found.' => 'Hech qanday tadbir topilmadi.',
+    'Email the event name' => 'Tadbir nomini elektron pochta orqali yuborish',
+    'Event Name:' => 'Tadbir nomi:',
+    'Description:' => 'Tavsif:',
+    'Email Address' => 'Elektron pochta',
+    'Cancel' => 'Bekor qilish',
 ];

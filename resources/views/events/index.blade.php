@@ -239,21 +239,22 @@
 <div class="modal" id="emailModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Emailga material yuborish</h3>
+            <h3>{{ __('messages.Email the event name') }}</h3>
             <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <p><strong>Material:</strong> <span id="modalMaterialName"></span></p>
-            <p><strong>Ma'lumot:</strong> <span id="modalMaterialDescription"></span></p>
+            <p><strong>{{ __('messages.Event Name:') }}</strong> <span id="modalMaterialName"></span></p>
+            <br>
+            <p><strong>{{ __('messages.Description:') }}</strong> <span id="modalMaterialDescription"></span></p>
 
             <div class="form-group">
-                <label for="emailInput">Email manzil</label>
+                <label for="emailInput">{{ __('messages.Email Address') }}</label>
                 <input type="email" id="emailInput" class="form-input" placeholder="sizning.email@example.com" required>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal()">Bekor qilish</button>
-            <button class="btn btn-primary" onclick="sendEmail()"><i class="fas fa-paper-plane"></i> Yuborish</button>
+            <button class="btn btn-secondary" onclick="closeModal()">{{ __('messages.Cancel') }}</button>
+            <button class="btn btn-primary" onclick="sendEmail()"><i class="fas fa-paper-plane"></i> {{ __('messages.Send') }}</button>
         </div>
     </div>
 </div>

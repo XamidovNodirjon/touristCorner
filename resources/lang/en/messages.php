@@ -25,4 +25,9 @@ return [
     'Events & Activities - Welcome to Uzbekistan' => 'Events & Activities - Welcome to Uzbekistan',
     'Send Details' => 'Send Details',
     'No events found.' => 'No events found.',
+    'Email the event name' => 'Email the event name',
+    'Event Name:' => 'Event Name:',
+    'Description:' => 'Description:',
+    'Email Address' => 'Email Address',
+    'Cancel' => 'Cancel',
 ];

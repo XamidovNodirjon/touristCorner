@@ -23,4 +23,9 @@ return [
     'Events & Activities - Welcome to Uzbekistan' => 'События и мероприятия - Добро пожаловать в Узбекистан',
     'Send Details' => 'Отправить детали',
     'No events found.' => 'События не найдены.',
+    'Email the event name' => 'Отправить название события на электронную почту',
+    'Event Name:' => 'Название события:',
+    'Description:' => 'Описание:',
+    'Email Address' => 'Электронная почта',
+    'Cancel' => 'Отмена',
 ];
