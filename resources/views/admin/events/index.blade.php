@@ -129,12 +129,16 @@
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">Category <span class="text-danger">*</span></label>
                                                     <select name="category_id" class="form-select" required>
-                                                        <option value=""> Kategoriyani tanlang </option>
+                                                        <option value="">Kategoriyani tanlang</option>
                                                         @foreach ($categories as $category)
-                                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                            <option value="{{ $category->id }}"
+                                                                {{ $event->category_id == $category->id ? 'selected' : '' }}>
+                                                                {{ $category->name }}
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
+
 
                                                 <div class="row">
                                                     <div class="col-md-4 mb-3">

@@ -30,13 +30,23 @@ body {
 .logo-icon {
     width: 48px;
     height: 48px;
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(245, 236, 236, 0.15);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #FFFFFF;
     font-size: 24px;
+}
+
+/* Ensure logo image fits the icon box exactly */
+.logo-icon .logo-image,
+.logo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
+    display: block;
+    border-radius: 6px; /* match icon rounding */
 }
 
 .logo-text h1 {

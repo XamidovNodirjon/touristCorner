@@ -30,4 +30,17 @@ class Event extends Model
     {
         return $this->belongsTo(EventCategory::class, 'category_id');
     }
+
+    public function getTitleAttribute()
+    {
+        $lang = session('locale', 'uz'); // default uz
+        return $this->{'title_' . $lang} ?? $this->title_uz;
+    }
+
+    // 🔥 Dynamic description accessor
+    public function getDescriptionAttribute()
+    {
+        $lang = session('locale', 'uz');
+        return $this->{'description_' . $lang} ?? $this->description_uz;
+    }
 }

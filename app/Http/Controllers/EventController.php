@@ -8,11 +8,12 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::all();
         $categories = EventCategory::all();
+        $events = Event::with('category')->latest()->get();
 
         return view('events.index', compact('events', 'categories'));
     }
+
 
     public function filterCategory($categoryId)
     {

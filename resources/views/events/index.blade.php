@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Materials Library - Welcome to Uzbekistan</title>
+    <title>{{ __('messages.Events & Activities - Welcome to Uzbekistan') }}</title>
 
     <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -14,15 +14,11 @@
     <link rel="stylesheet" href="{{ asset('css/library.css') }}">
     <link rel="stylesheet" href="{{ asset('css/events.css') }}">
     
-
-
     <style>
         /* Category buttons */
         .category-bar {
             display: flex;
             flex-wrap: wrap;
-            /* gap: 8px; */
-            /* margin: 25px 0; */
             justify-content: center;
         }
 
@@ -36,6 +32,11 @@
             transition: all 0.2s ease;
             cursor: pointer;
         }
+        .card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
 
         .category-button:hover {
             background: #007bff;
@@ -48,48 +49,116 @@
             color: #fff;
             border-color: #007bff;
         }
-        
+
+        /* Loading Animation Modal */
+        .loading-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-animation {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            animation: rotate 2s linear infinite;
+        }
+
+        .loading-animation svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 5px rgba(0, 123, 255, 0.5));
+        }
+
+        .loading-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-modal.show {
+            display: flex;
+        }
     </style>
 </head>
 
 <body>
 <header class="header-bar">
-    <div class="header-left">
-        <div class="logo-icon"><i class="fas fa-globe-asia"></i></div>
-        <div class="logo-text">
-            <h1>Welcome to Uzbekistan</h1>
-            <p>Your Gateway to the Heart of Central Asia</p>
+    <a href="{{route('welcome')}}" style="text-decoration: dashed;">
+        <div class="header-left">
+            <div class="logo-text">
+                <h1>{{ __('messages.Welcome to Uzbekistan') }}</h1>
+                <p>{{ __('messages.Your Gateway to the Heart of Central Asia') }}</p>
+            </div>
         </div>
-    </div>
+    </a>
 
-    <div class="header-right" style="color: #FFFFFF;">
+    <div class="header-right">
         <nav class="nav-links">
-            <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
-            <a href="{{ route('map-road') }}" class="nav-link"><i class="fas fa-map-location-dot"></i> Interactive Map</a>
-            <a href="{{ route('libraries.index') }}" class="nav-link"><i class="fas fa-book-open"></i> Materials Library</a>
-            <a href="{{ route('events.index') }}" class="nav-link active"><i class="fas fa-calendar-alt"></i> Events & Activities</a>
+            <a href="{{ route('welcome') }}" class="nav-link"><i class="fas fa-home"></i>{{ __('messages.Home') }}</a>
+            <a href="{{ route('map-road') }}" class="nav-link"><i class="fas fa-map-location-dot"></i>{{ __('messages.Interactive Map') }}</a>
+            <a href="{{ route('libraries.index') }}" class="nav-link"><i class="fas fa-book-open"></i>{{ __('messages.Materials Library') }}</a>
+            <a href="{{ route('events.index') }}" class="nav-link active"><i class="fas fa-calendar-alt"></i>{{ __('messages.Events & Activities') }}</a>
         </nav>
 
+        @php
+            $currentLocale = session('locale', 'uz'); // Default — uz
+            $flags = [
+                'uz' => 'https://flagcdn.com/w40/uz.png',
+                'en' => 'https://flagcdn.com/w40/gb.png',
+                'ru' => 'https://flagcdn.com/w40/ru.png',
+            ];
+            $langLabels = [
+                'uz' => 'UZ',
+                'en' => 'EN',
+                'ru' => 'RU',
+            ];
+        @endphp
+
         <div class="language-switcher">
-            <div class="lang-select" id="lang-select-btn">
-                <img src="https://flagcdn.com/w40/uz.png" alt="Flag" class="flag" id="selected-flag">
-                <span id="selected-lang-text">UZ</span>
+            <div class="lang-select" id="lang-select-btn" aria-label="Language selector">
+                <img src="{{ $flags[$currentLocale] }}" alt="Flag" class="flag" id="selected-flag">
+                <span id="selected-lang-text">{{ $langLabels[$currentLocale] }}</span>
                 <i class="fa-solid fa-chevron-down"></i>
             </div>
             <ul class="lang-dropdown" id="lang-dropdown">
-                <li data-lang="uz" data-flag="https://flagcdn.com/w40/uz.png"><img src="https://flagcdn.com/w40/uz.png" class="flag"> O‘zbekcha</li>
-                <li data-lang="en" data-flag="https://flagcdn.com/w40/gb.png"><img src="https://flagcdn.com/w40/gb.png" class="flag"> English</li>
-                <li data-lang="ru" data-flag="https://flagcdn.com/w40/ru.png"><img src="https://flagcdn.com/w40/ru.png" class="flag"> Русский</li>
+                <li data-lang="uz" data-flag="{{ $flags['uz'] }}">
+                    <img src="{{ $flags['uz'] }}" alt="Uzbek Flag" class="flag"> O'zbekcha
+                </li>
+                <li data-lang="en" data-flag="{{ $flags['en'] }}">
+                    <img src="{{ $flags['en'] }}" alt="UK Flag" class="flag"> English
+                </li>
+                <li data-lang="ru" data-flag="{{ $flags['ru'] }}">
+                    <img src="{{ $flags['ru'] }}" alt="Russia Flag" class="flag"> Русский
+                </li>
             </ul>
         </div>
+
     </div>
 </header>
 
 <main>
     <div class="container">
         <div class="page-header">
-            <h2>Materiallar Kutubxonasi</h2>
-            <p>O'zbekiston haqidagi qo'llanmalar, kitoblar va resurslar to'plamini ko'ring</p>
+            <h2>{{ __('messages.Find top events and celebrations across Uzbekistan') }}</h2>
+            <p>{{ __('messages.Learn about upcoming cultural and tourism events in Uzbekistan') }}</p>
         </div>
 
         <div class="category-bar mb-3">
@@ -120,12 +189,14 @@
                             <div class="tag-container">
                                 <span class="tag {{ $event->category->slug ?? 'default' }}">{{ $event->category->name ?? 'Tadbir' }}</span>
                                 <span class="price">
-                                    {{ $event->price > 0 ? 'UZS ' . $event->price : 'Free' }}
+                                    {!! $event->price > 0 
+                                        ? 'UZS ' . number_format($event->price, 0, '.', ' ') 
+                                        : '<i class="fa fa-ticket"></i> Free' !!}
                                 </span>
                             </div>
 
-                            <h5 class="card-title">{{ $event->title_uz }}</h5>
-                            <p class="card-description">{{ Str::limit($event->description_uz, 80) }}</p>
+                            <h5 class="card-title">{{ $event->title }}</h5>
+                            <p class="card-description">{{ Str::limit($event->description, 80) }}</p>
 
                             <div class="card-details">
                                 <div class="detail-item">
@@ -145,24 +216,26 @@
                             <button class="card-button"
                                 onclick="openEmailModal(
                                     '{{ $event->id }}',
-                                    '{{ $event->title_uz }}',
+                                    '{{ $event->title }}',
                                     '{{ $event->date }}',
                                     '{{ $event->location }}',
-                                    '{{ $event->description_uz }}',
-                                    '{{ $event->image }}'
+                                    '{{ $event->description }}',
+                                    '{{ $event->image }}',
+                                    '{{ $event->time }}'
                                 )">
-                                <i class="fas fa-envelope"></i> Send Details
+                                <i class="fas fa-envelope"></i> {{ __('messages.Send Details') }}
                             </button>
                         </div>
                     </div>
                 </div>
-            @endforeach  
+            @endforeach
         </div>
     @else
-        <p class="text-muted">Hech qanday tadbir topilmadi.</p>
+        <p class="text-muted">{{ __('messages.No events found.') }}</p>
     @endif
-
 </main>
+
+<!-- Email Modal -->
 <div class="modal" id="emailModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -184,6 +257,7 @@
         </div>
     </div>
 </div>
+
 <!-- Success Modal -->
 <div class="modal" id="successModal">
     <div class="modal-content success-modal">
@@ -199,47 +273,91 @@
         </div>
     </div>
 </div>
-    <script>
 
-    const langSelectBtn = document.getElementById('lang-select-btn');
-    const langDropdown = document.getElementById('lang-dropdown');
-    const selectedFlag = document.getElementById('selected-flag');
-    const selectedLangText = document.getElementById('selected-lang-text');
+<!-- Loading Animation Modal -->
+<div class="loading-modal" id="loadingModal">
+    <div class="loading-animation">
+        <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#007bff" stroke-width="6" stroke-dasharray="20,10"/>
+            <circle cx="50" cy="50" r="30" fill="none" stroke="#ffd700" stroke-width="4" stroke-dasharray="15,10"/>
+            <circle cx="50" cy="50" r="20" fill="none" stroke="#ff4500" stroke-width="3" stroke-dasharray="10,10"/>
+        </svg>
+        <span class="loading-text">Yuborilmoqda...</span>
+    </div>
+</div>
 
-    langSelectBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        langDropdown.classList.toggle('show');
-    });
-    langDropdown.addEventListener('click', e => {
-        const li = e.target.closest('li');
-        if (!li) return;
-        selectedFlag.src = li.getAttribute('data-flag');
-        selectedLangText.textContent = li.getAttribute('data-lang').toUpperCase();
-        langDropdown.classList.remove('show');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const langSelectBtn = document.getElementById('lang-select-btn');
+        const langDropdown = document.getElementById('lang-dropdown');
+        const selectedFlag = document.getElementById('selected-flag');
+        const selectedLangText = document.getElementById('selected-lang-text');
+
+        langSelectBtn.addEventListener('click', function() {
+            langDropdown.classList.toggle('show');
+        });
+
+        langDropdown.addEventListener('click', function(event) {
+            const target = event.target.closest('li');
+            if (!target) return;
+
+            const lang = target.getAttribute('data-lang');
+            const flagSrc = target.getAttribute('data-flag');
+
+            // Tanlangan flag va tilni yangilash
+            selectedFlag.src = flagSrc;
+            selectedLangText.textContent = lang.toUpperCase();
+            langDropdown.classList.remove('show');
+
+            // Laravel routiga so‘rov yuborish:
+            window.location.href = `/lang/${lang}`;
+        });
+
+        // Dropdown tashqarisiga bosilganda yopish
+        document.addEventListener('click', function(event) {
+            if (!langSelectBtn.contains(event.target) && !langDropdown.contains(event.target)) {
+                langDropdown.classList.remove('show');
+            }
+        });
+        
     });
     document.addEventListener('click', () => langDropdown.classList.remove('show'));
     
-        let selectedEvent = {};
+    let selectedEvent = {};
 
-        function openEmailModal(id, title, date, location, description_uz, image) {
-            selectedEvent = { id, title, date, location, description_uz, image };
+    function openEmailModal(id, title_uz, date, location, description_uz, image, time) {
+        selectedEvent = { id, title_uz, date, location, description_uz, image, time };
 
-            document.getElementById('modalMaterialName').textContent = title;
-            document.getElementById('modalMaterialDescription').textContent = description_uz;
-            document.getElementById('emailModal').classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
+        document.getElementById('modalMaterialName').textContent = title_uz;
+        document.getElementById('modalMaterialDescription').textContent = description_uz;
+        document.getElementById('emailModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
 
-        function closeModal() {
-            document.getElementById('emailModal').classList.remove('show');
-            document.body.style.overflow = 'auto';
-            document.getElementById('emailInput').value = '';
-        }
+    function closeModal() {
+        document.getElementById('emailModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+        document.getElementById('emailInput').value = '';
+    }
 
-        async function sendEmail() {
-            const email = document.getElementById('emailInput').value;
-            if (!email) return alert('Iltimos, email manzilni kiriting');
+    function showLoadingAnimation() {
+        document.getElementById('loadingModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
 
+    function hideLoadingAnimation() {
+        document.getElementById('loadingModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+
+    async function sendEmail() {
+        const email = document.getElementById('emailInput').value;
+        if (!email) return alert('Iltimos, email manzilni kiriting');
+
+        closeModal(); // Close email modal immediately
+        showLoadingAnimation(); // Show loading animation
+
+        try {
             const response = await fetch("{{ route('send.event') }}", {
                 method: 'POST',
                 headers: {
@@ -252,25 +370,30 @@
                 })
             });
 
+            hideLoadingAnimation(); // Hide loading animation
+
             if (response.ok) {
-                closeModal();
                 openSuccessModal();
                 // 3 soniyadan keyin avtomatik yopish
                 setTimeout(closeSuccessModal, 3000);
             } else {
                 alert('Email yuborishda xatolik yuz berdi');
             }
+        } catch (error) {
+            hideLoadingAnimation(); // Hide loading animation on error
+            alert('Email yuborishda xatolik yuz berdi');
         }
+    }
 
-        function openSuccessModal() {
-            document.getElementById('successModal').classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
+    function openSuccessModal() {
+        document.getElementById('successModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
 
-        function closeSuccessModal() {
-            document.getElementById('successModal').classList.remove('show');
-            document.body.style.overflow = 'auto';
-        }
-    </script>
+    function closeSuccessModal() {
+        document.getElementById('successModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+</script>
 </body>
 </html>

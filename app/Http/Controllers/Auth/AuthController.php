@@ -9,10 +9,8 @@ class AuthController extends Controller
 {
     public function getLogin()
     {
-        return view('auth.login');
+        return view('auth.login')->withErrors([]);
     }
-
-
 
 
     public function login(Request $request)

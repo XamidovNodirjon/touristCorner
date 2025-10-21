@@ -7,13 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class LibraryCategory extends Model
 {
     protected $table = 'library_categories';
-    protected $fillable = ['name'];
-
-
+    protected $fillable = ['name_uz', 'name_en', 'name_ru'];
 
 
     public function libraries()
     {
         return $this->hasMany(Library::class, 'category_id');
+    }
+
+    public function getNameAttribute()
+    {
+        $lang = session('locale', 'uz');
+        return $this->{'name_' . $lang} ?? $this->name_uz;
     }
 }

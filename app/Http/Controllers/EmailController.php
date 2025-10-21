@@ -62,18 +62,19 @@ class EmailController extends Controller
 
         // Email matni
         $messageText = "
-            🗓 Tadbir nomi: {$event['title']}
+            🗓 Tadbir nomi: {$event['title_uz']}
             📅 Sana: {$event['date']}
+            Vaqt: {$event['time']}
             📍 Joylashuv: {$event['location']}
             
             ℹ️ Tavsif:
-            {$event['description']}
+            {$event['description_uz']}
         ";
 
         // Email yuborish
         \Mail::raw($messageText, function ($message) use ($data, $event, $filePath, $hasFile) {
             $message->to($data['email'])
-                ->subject("Tadbir: {$event['title']}");
+                ->subject("Tadbir: {$event['title_uz']}");
             if ($hasFile) {
                 $message->attach($filePath);
             }

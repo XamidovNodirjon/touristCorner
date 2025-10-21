@@ -9,14 +9,29 @@ use App\Http\Controllers\LibraryController as ControllersLibraryController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use PharIo\Manifest\Email;
+
+
+Route::middleware(['web'])->group(function () {
+
+    // 🌍 Til almashtirish (har kim uchun ochiq)
+    Route::get('lang/{locale}', function ($locale) {
+        if (in_array($locale, ['uz', 'en', 'ru'])) {
+            Session::put('locale', $locale);
+        }
+        return redirect()->back();
+    })->name('lang.switch');
+
+});
 
 Route::get('/', [MainController::class, 'welcome'])->name('welcome');
 
-Route::get('uzbekistan-map', [MainController::class, 'map'])->name('map-road');
-Route::get('admin/get-login', [AuthController::class, 'getLogin']);
+Route::get('admin/get-login', [AuthController::class, 'getLogin'])->name('login.form');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('uzbekistan-map', [MainController::class, 'map'])->name('map-road');
 
 //library
 Route::get('get-libraries', [ControllersLibraryController::class, 'index'])->name('libraries.index');
@@ -33,9 +48,6 @@ Route::get('/events/category/{id}', [ControllersEventController::class, 'filterC
 
 Route::post('/send-material', [EmailController::class, 'sendMaterial'])->name('send.material');
 Route::post('/send-event', [EmailController::class, 'sendEvent'])->name('send.event');
-
-
-
 
 
 

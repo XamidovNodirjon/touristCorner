@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Welcome to Uzbekistan</title>
+    <title>{{ __('messages.Welcome to Uzbekistan') }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
@@ -17,50 +17,64 @@
 </head>
 <body>
 <header class="header-bar">
-    <div class="header-left">
-        <div class="logo-icon">
-            <i class="fas fa-globe-asia"></i>
+    <a href="{{route('welcome')}}" style="text-decoration: dashed;">
+        <div class="header-left">
+            <div class="logo-text">
+                <h1>{{ __('messages.Welcome to Uzbekistan') }}</h1>
+                <p>{{ __('messages.Your Gateway to the Heart of Central Asia') }}</p>
+            </div>
         </div>
-        <div class="logo-text">
-            <h1>Welcome to Uzbekistan</h1>
-            <p>Your Gateway to the Heart of Central Asia</p>
-        </div>
-    </div>
+    </a>
 
     <div class="header-right">
         <nav class="nav-links">
-            <a href="{{ route('welcome') }}" class="nav-link active"><i class="fas fa-home"></i> Home</a>
-            <a href="{{ route('map-road') }}" class="nav-link"><i class="fas fa-map-location-dot"></i> Interactive Map</a>
-            <a href="{{ route('libraries.index') }}" class="nav-link"><i class="fas fa-book-open"></i> Materials Library</a>
-            <a href="{{ route('events.index') }}" class="nav-link"><i class="fas fa-calendar-alt"></i> Events & Activities</a>
+            <a href="{{ route('welcome') }}" class="nav-link active"><i class="fas fa-home"></i>{{ __('messages.Home') }}</a>
+            <a href="{{ route('map-road') }}" class="nav-link"><i class="fas fa-map-location-dot"></i>{{ __('messages.Interactive Map') }}</a>
+            <a href="{{ route('libraries.index') }}" class="nav-link"><i class="fas fa-book-open"></i>{{ __('messages.Materials Library') }}</a>
+            <a href="{{ route('events.index') }}" class="nav-link"><i class="fas fa-calendar-alt"></i>{{ __('messages.Events & Activities') }}</a>
         </nav>
+
+        @php
+            $currentLocale = session('locale', 'uz'); // Default — uz
+            $flags = [
+                'uz' => 'https://flagcdn.com/w40/uz.png',
+                'en' => 'https://flagcdn.com/w40/gb.png',
+                'ru' => 'https://flagcdn.com/w40/ru.png',
+            ];
+            $langLabels = [
+                'uz' => 'UZ',
+                'en' => 'EN',
+                'ru' => 'RU',
+            ];
+        @endphp
 
         <div class="language-switcher">
             <div class="lang-select" id="lang-select-btn" aria-label="Language selector">
-                <img src="https://flagcdn.com/w40/uz.png" alt="Uzbekistan Flag" class="flag" id="selected-flag">
-                <span id="selected-lang-text">UZ</span>
+                <img src="{{ $flags[$currentLocale] }}" alt="Flag" class="flag" id="selected-flag">
+                <span id="selected-lang-text">{{ $langLabels[$currentLocale] }}</span>
                 <i class="fa-solid fa-chevron-down"></i>
             </div>
             <ul class="lang-dropdown" id="lang-dropdown">
-                <li data-lang="uz" data-flag="https://flagcdn.com/w40/uz.png">
-                    <img src="https://flagcdn.com/w40/uz.png" alt="Uzbekistan Flag" class="flag"> O'zbekcha
+                <li data-lang="uz" data-flag="{{ $flags['uz'] }}">
+                    <img src="{{ $flags['uz'] }}" alt="Uzbek Flag" class="flag"> O'zbekcha
                 </li>
-                <li data-lang="en" data-flag="https://flagcdn.com/w40/gb.png">
-                    <img src="https://flagcdn.com/w40/gb.png" alt="UK Flag" class="flag"> English
+                <li data-lang="en" data-flag="{{ $flags['en'] }}">
+                    <img src="{{ $flags['en'] }}" alt="UK Flag" class="flag"> English
                 </li>
-                <li data-lang="ru" data-flag="https://flagcdn.com/w40/ru.png">
-                    <img src="https://flagcdn.com/w40/ru.png" alt="Russia Flag" class="flag"> Русский
+                <li data-lang="ru" data-flag="{{ $flags['ru'] }}">
+                    <img src="{{ $flags['ru'] }}" alt="Russia Flag" class="flag"> Русский
                 </li>
             </ul>
         </div>
+
     </div>
 </header>
 
 <main>
     <section class="journey-section">
         <div class="section-header">
-            <h2>Plan Your Journey</h2>
-            <p>Everything you need to explore Uzbekistan is at your fingertips</p>
+            <h2>{{ __('messages.Plan Your Journey') }}</h2>
+            <p>{{ __('messages.Everything you need to explore Uzbekistan is at your fingertips') }}</p>
         </div>
         <div class="cards-container">
             <!-- First Card - Interactive Map -->
@@ -71,9 +85,9 @@
                              alt="Uzbekistan map" class="card-image" loading="lazy">
                     </div>
                     <div class="card-content">
-                        <h3>Explore Interactive Map</h3>
-                        <p>Discover must-visit destination across Uzbekistan</p>
-                        <span class="card-link">Get Started →</span>
+                        <h3>{{ __('messages.Explore Interactive Map') }}</h3>
+                        <p>{{ __('messages.Discover the famous destinations in Uzbekistan for yourself') }}</p>
+                        <span class="card-link">{{ __('messages.Get Started') }}→</span>
                     </div>
                 </a>
             </div>
@@ -86,9 +100,9 @@
                              alt="Uzbekistan map" class="card-image" loading="lazy">
                     </div>
                     <div class="card-content">
-                        <h3>Online Library</h3>
-                        <p>Access useful materials for your Uzbekistan journey</p>
-                        <span class="card-link">Get Started →</span>
+                        <h3>{{ __('messages.Online Library') }}</h3>
+                        <p>{{ __('messages.Access useful materials for your Uzbekistan journey') }}</p>
+                        <span class="card-link">{{ __('messages.Get Started') }}→</span>
                     </div>
                 </a>
             </div>
@@ -101,47 +115,49 @@
                              alt="Uzbekistan map" class="card-image" loading="lazy">
                     </div>
                     <div class="card-content">
-                        <h3>Events & Festivals</h3>
-                        <p>Explore festivals, exhibitions, and celebrations across Uzbekistan</p>
-                        <span class="card-link">Get Started →</span>
+                        <h3>{{ __('messages.Events & Festivals') }}</h3>
+                        <p>{{ __('messages.Explore festivals, exhibitions, and celebrations across Uzbekistan') }}</p>
+                        <span class="card-link">{{ __('messages.Get Started') }}→</span>
                     </div>
                 </a>
             </div>
         </div>
     </section>
 </main>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const langSelectBtn = document.getElementById('lang-select-btn');
         const langDropdown = document.getElementById('lang-dropdown');
         const selectedFlag = document.getElementById('selected-flag');
         const selectedLangText = document.getElementById('selected-lang-text');
 
-        langSelectBtn.addEventListener('click', function (event) {
-            event.stopPropagation();
+        langSelectBtn.addEventListener('click', function() {
             langDropdown.classList.toggle('show');
         });
 
-        langDropdown.addEventListener('click', function (event) {
+        langDropdown.addEventListener('click', function(event) {
             const target = event.target.closest('li');
             if (!target) return;
 
             const lang = target.getAttribute('data-lang');
             const flagSrc = target.getAttribute('data-flag');
 
+            // Tanlangan flag va tilni yangilash
             selectedFlag.src = flagSrc;
             selectedLangText.textContent = lang.toUpperCase();
             langDropdown.classList.remove('show');
 
-            console.log(`Selected language: ${lang}`);
+            // Laravel routiga so‘rov yuborish:
+            window.location.href = `/lang/${lang}`;
         });
 
-        document.addEventListener('click', function () {
-            if (langDropdown.classList.contains('show')) {
+        // Dropdown tashqarisiga bosilganda yopish
+        document.addEventListener('click', function(event) {
+            if (!langSelectBtn.contains(event.target) && !langDropdown.contains(event.target)) {
                 langDropdown.classList.remove('show');
             }
         });
+        
     });
 </script>
 </body>

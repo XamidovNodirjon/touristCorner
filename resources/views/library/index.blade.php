@@ -50,41 +50,63 @@
 
 <body>
 <header class="header-bar">
-    <div class="header-left">
-        <div class="logo-icon"><i class="fas fa-globe-asia"></i></div>
-        <div class="logo-text">
-            <h1>Welcome to Uzbekistan</h1>
-            <p>Your Gateway to the Heart of Central Asia</p>
+    <a href="{{route('welcome')}}" style="text-decoration: dashed;">
+        <div class="header-left">
+            <div class="logo-text">
+                <h1>{{ __('messages.Welcome to Uzbekistan') }}</h1>
+                <p>{{ __('messages.Your Gateway to the Heart of Central Asia') }}</p>
+            </div>
         </div>
-    </div>
+    </a>
 
     <div class="header-right">
         <nav class="nav-links">
-            <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
-            <a href="{{ route('map-road') }}" class="nav-link"><i class="fas fa-map-location-dot"></i> Interactive Map</a>
-            <a href="{{ route('libraries.index') }}" class="nav-link active"><i class="fas fa-book-open"></i> Materials Library</a>
-            <a href="{{ route('events.index') }}" class="nav-link"><i class="fas fa-calendar-alt"></i> Events & Activities</a>
+            <a href="{{ route('welcome') }}" class="nav-link "><i class="fas fa-home"></i>{{ __('messages.Home') }}</a>
+            <a href="{{ route('map-road') }}" class="nav-link"><i class="fas fa-map-location-dot"></i>{{ __('messages.Interactive Map') }}</a>
+            <a href="{{ route('libraries.index') }}" class="nav-link active"><i class="fas fa-book-open"></i>{{ __('messages.Materials Library') }}</a>
+            <a href="{{ route('events.index') }}" class="nav-link"><i class="fas fa-calendar-alt"></i>{{ __('messages.Events & Activities') }}</a>
         </nav>
 
+        @php
+            $currentLocale = session('locale', 'uz'); // Default — uz
+            $flags = [
+                'uz' => 'https://flagcdn.com/w40/uz.png',
+                'en' => 'https://flagcdn.com/w40/gb.png',
+                'ru' => 'https://flagcdn.com/w40/ru.png',
+            ];
+            $langLabels = [
+                'uz' => 'UZ',
+                'en' => 'EN',
+                'ru' => 'RU',
+            ];
+        @endphp
+
         <div class="language-switcher">
-            <div class="lang-select" id="lang-select-btn">
-                <img src="https://flagcdn.com/w40/uz.png" alt="Flag" class="flag" id="selected-flag">
-                <span id="selected-lang-text">UZ</span>
+            <div class="lang-select" id="lang-select-btn" aria-label="Language selector">
+                <img src="{{ $flags[$currentLocale] }}" alt="Flag" class="flag" id="selected-flag">
+                <span id="selected-lang-text">{{ $langLabels[$currentLocale] }}</span>
                 <i class="fa-solid fa-chevron-down"></i>
             </div>
             <ul class="lang-dropdown" id="lang-dropdown">
-                <li data-lang="uz" data-flag="https://flagcdn.com/w40/uz.png"><img src="https://flagcdn.com/w40/uz.png" class="flag"> O‘zbekcha</li>
-                <li data-lang="en" data-flag="https://flagcdn.com/w40/gb.png"><img src="https://flagcdn.com/w40/gb.png" class="flag"> English</li>
-                <li data-lang="ru" data-flag="https://flagcdn.com/w40/ru.png"><img src="https://flagcdn.com/w40/ru.png" class="flag"> Русский</li>
+                <li data-lang="uz" data-flag="{{ $flags['uz'] }}">
+                    <img src="{{ $flags['uz'] }}" alt="Uzbek Flag" class="flag"> O'zbekcha
+                </li>
+                <li data-lang="en" data-flag="{{ $flags['en'] }}">
+                    <img src="{{ $flags['en'] }}" alt="UK Flag" class="flag"> English
+                </li>
+                <li data-lang="ru" data-flag="{{ $flags['ru'] }}">
+                    <img src="{{ $flags['ru'] }}" alt="Russia Flag" class="flag"> Русский
+                </li>
             </ul>
         </div>
+
     </div>
 </header>
 
 <main>
     <div class="page-header">
-        <h2>Materiallar Kutubxonasi</h2>
-        <p>O'zbekiston haqidagi qo'llanmalar, kitoblar va resurslar to'plamini ko'ring</p>
+        <h2>{{ __('messages.Materials Library') }}</h2>
+        <p>{{ __('messages.View a collection of guides, books and resources about Uzbekistan') }}</p>
     </div>
 
     <!-- CATEGORY BUTTONS -->
@@ -104,8 +126,8 @@
     @if($materials->isEmpty())
         <div class="empty-state">
             <i class="fas fa-book-open"></i>
-            <h3>Hech qanday material topilmadi</h3>
-            <p>Hozircha kutubxonada materiallar yo'q</p>
+            <h3>{{ __('messages.No material found') }}</h3>
+            <p>{{ __('messages.There are no materials in the library yet.') }}</p>
         </div>
     @else
         <div class="library-grid">
@@ -186,22 +208,41 @@
 </div>
 <script>
     // === Language Dropdown ===
-    const langSelectBtn = document.getElementById('lang-select-btn');
-    const langDropdown = document.getElementById('lang-dropdown');
-    const selectedFlag = document.getElementById('selected-flag');
-    const selectedLangText = document.getElementById('selected-lang-text');
+    document.addEventListener('DOMContentLoaded', function() {
+        const langSelectBtn = document.getElementById('lang-select-btn');
+        const langDropdown = document.getElementById('lang-dropdown');
+        const selectedFlag = document.getElementById('selected-flag');
+        const selectedLangText = document.getElementById('selected-lang-text');
 
-    langSelectBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        langDropdown.classList.toggle('show');
+        langSelectBtn.addEventListener('click', function() {
+            langDropdown.classList.toggle('show');
+        });
+
+        langDropdown.addEventListener('click', function(event) {
+            const target = event.target.closest('li');
+            if (!target) return;
+
+            const lang = target.getAttribute('data-lang');
+            const flagSrc = target.getAttribute('data-flag');
+
+            // Tanlangan flag va tilni yangilash
+            selectedFlag.src = flagSrc;
+            selectedLangText.textContent = lang.toUpperCase();
+            langDropdown.classList.remove('show');
+
+            // Laravel routiga so‘rov yuborish:
+            window.location.href = `/lang/${lang}`;
+        });
+
+        // Dropdown tashqarisiga bosilganda yopish
+        document.addEventListener('click', function(event) {
+            if (!langSelectBtn.contains(event.target) && !langDropdown.contains(event.target)) {
+                langDropdown.classList.remove('show');
+            }
+        });
+        
     });
-    langDropdown.addEventListener('click', e => {
-        const li = e.target.closest('li');
-        if (!li) return;
-        selectedFlag.src = li.getAttribute('data-flag');
-        selectedLangText.textContent = li.getAttribute('data-lang').toUpperCase();
-        langDropdown.classList.remove('show');
-    });
+
     document.addEventListener('click', () => langDropdown.classList.remove('show'));
 
     // === Modal funksiyalari ===

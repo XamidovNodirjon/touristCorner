@@ -43,8 +43,9 @@ class EventController extends Controller
         return redirect()->back()->with('success', 'Tadbir muvaffaqiyatli qo‘shildi!');
     }
 
-    public function update(Request $request, Event $event)
+    public function update(Request $request, $id)
     {
+        $event = Event::findOrFail($id);
         $validated = $request->validate([
             'title_uz' => 'required|string|max:255',
             'title_en' => 'required|string|max:255',
@@ -72,8 +73,9 @@ class EventController extends Controller
         return redirect()->back()->with('success', 'Tadbir yangilandi!');
     }
 
-    public function destroy(Event $event)
+    public function destroy($id)
     {
+        $event = Event::findOrFail($id);
         if ($event->image) {
             Storage::disk('public')->delete($event->image);
         }
@@ -82,4 +84,5 @@ class EventController extends Controller
 
         return redirect()->back()->with('success', 'Tadbir o‘chirildi!');
     }
+
 }

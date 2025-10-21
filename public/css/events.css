@@ -210,6 +210,36 @@ header {
         padding: 0 15px;
         box-sizing: border-box;
     }
+
+    /* Responsive adjustments: on smaller screens make columns stack */
+    @media (max-width: 992px) {
+        .col-md-4 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .col-md-4 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        .card-image {
+            /* let image height adapt to width to avoid cropping half cards */
+            height: auto;
+            max-height: 320px; /* optional cap */
+            aspect-ratio: 16 / 9;
+        }
+        .card {
+            /* ensure cards stretch naturally and content flows */
+            display: flex;
+            flex-direction: column;
+            height: auto;
+        }
+        .card-content {
+            padding: 16px;
+        }
+    }
     .card {
         border: 1px solid #EBE9DA;
         border-radius: 12px;
