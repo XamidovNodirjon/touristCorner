@@ -7,7 +7,7 @@ return [
     'Materials Library' => 'Materiallar kutubxonasi',
     'Events & Activities' => 'Tadbirlar va faoliyatlar',
     'Plan Your Journey' => 'Sayohatingizni rejalashtiring',
-    'Everything you need to explore Uzbekistan is at your fingertips' => 'Oʻzbekistonda sayohat qilish uchun kerak bo‘lgan hamma narsa shu yerda',
+    'Everything a traveler needs can be found on this website' => 'Sayyohga kerak bo‘lgan barcha narsa ushbu saytda mavjud',
     'Explore Interactive Map' => 'Interaktiv xaritani o‘rganing',
     'Discover the famous destinations in Uzbekistan for yourself' => 'Oʻzbekistonda mashxur manzillarni o‘zingiz uchun kashf eting',
     'Online Library' => 'Elektron kutubxona',
@@ -30,4 +30,20 @@ return [
     'Description:' => 'Tavsif:',
     'Email Address' => 'Elektron pochta',
     'Cancel' => 'Bekor qilish',
+    'Send' => 'Yuborish',
+    'Free download' => 'Bepul yuklab olish',
+    'Material:' => 'Material:',
+    'Success' => 'Muvaffaqiyatli',
+    'Material sent successfully' => 'Material muvaffaqiyatli yuborildi',
+    'Send to email' =>'Elektron pochtaga yuboring',
+    '* We will also send you the latest news and useful materials to your email address.' => '* Sizning email manzilingizga keyingi yangilik va foydali materiallar ham yuborib turamiz.',
+    '📧 Your email address' => '📧 Sizning elektron pochta manzilingiz',
+    '📩 Send by email' => '📩 Elektron pochta orqali yuboring',
+    'All' => 'Barchasi',
+  
+
+
+
+
+
 ];

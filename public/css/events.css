@@ -139,14 +139,14 @@ header {
         font-family: 'Inter', sans-serif;
         color: #1C3F3A; /* Asosiy rang */
         background-color: #E0E9E9; /* Saytning orqa fon rangi */
-
     }
 
     /* Header stillarini yangi rangga moslash */
-    .header-bar {
-        background-color: #1C3F3A;
-        border-bottom: 1px solid #EBE9DA;
-    }
+.header-bar {
+    background-color: #1C3F3A;
+    border-bottom: 1px solid #EBE9DA;
+    
+}
     
     .header-left h1 { color: #FFFFFF; }
     .header-left p { color: #FFFFFF; }
@@ -207,7 +207,7 @@ header {
     .col-md-4 {
         flex: 0 0 33.333333%;
         max-width: 33.333333%;
-        padding: 0 15px;
+        padding: 15px 15px;
         box-sizing: border-box;
     }
 

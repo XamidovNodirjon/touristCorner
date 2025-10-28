@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('file_path_ru')->nullable();
             $table->string('file_path_en')->nullable();
+            $table->string('file_path_uz')->nullable();
             $table->timestamps();
         });
     }

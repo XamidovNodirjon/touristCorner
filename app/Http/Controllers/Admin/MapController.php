@@ -14,7 +14,12 @@ class MapController extends Controller
 
     public function index()
     {
-        $maps = \App\Models\Map::all();
+        $maps = \App\Models\Map::select([
+            'id','latitude','longitude',
+            'name_uz','name_ru','name_en',
+            'description_uz','description_ru','description_en',
+            'image'               // faqat fayl yo‘li
+        ])->get();
         return view('admin.maps.index', compact('maps'));
     }
 
@@ -34,20 +39,32 @@ class MapController extends Controller
             'description_uz' => 'nullable|string',
             'description_ru' => 'nullable|string',
             'description_en' => 'nullable|string',
-            'image' => 'nullable|image|max:5048',
+            'image' => 'nullable|image|max:10048',
         ]);
 
-        $data = $request->only(['latitude', 'longitude', 'name_uz', 'name_ru', 'name_en', 'description_uz', 'description_ru', 'description_en']);
+        $data = $request->only([
+            'latitude',
+            'longitude',
+            'name_uz',
+            'name_ru',
+            'name_en',
+            'description_uz',
+            'description_ru',
+            'description_en',
+        ]);
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('maps', 'public');
-            $data['image'] = $imagePath;
+            $path = $request->file('image')->store('maps', 'public');
+            $data['image'] = $path;
         }
 
         \App\Models\Map::create($data);
 
-        return redirect()->route('admin.maps')->with('success', 'Map data created successfully.');
+        return redirect()->route('admin.maps')
+            ->with('success', 'Map data created successfully.');
     }
+
+
     
     public function destroy($id)
     {

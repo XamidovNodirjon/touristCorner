@@ -13,18 +13,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
+    <style>
+        /* === ORQA FON STILI QO'SHILDI === */
+        body {
+            background-image: url("{{ asset('fon/fon.png') }}");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        /* ================================ */
 
+        .left-logo img {
+            max-width: 130px;
+            height: auto;
+            display: block;
+        }
+    </style>
 </head>
 <body>
 <header class="header-bar">
-    <a href="{{route('welcome')}}" style="text-decoration: dashed;">
+    <div class="header-left">
         <div class="header-left">
-            <div class="logo-text">
-                <h1>{{ __('messages.Welcome to Uzbekistan') }}</h1>
-                <p>{{ __('messages.Your Gateway to the Heart of Central Asia') }}</p>
-            </div>
+            <a href="{{route('welcome')}}">
+                <div class="left-logo">
+                    <img src="{{asset('/logo/logo.png')}}" alt="Logo">
+                </div>
+            </a>
         </div>
-    </a>
+    </div>
 
     <div class="header-right">
         <nav class="nav-links">
@@ -35,7 +51,7 @@
         </nav>
 
         @php
-            $currentLocale = session('locale', 'uz'); // Default — uz
+            $currentLocale = session('locale', 'en'); // Default — en
             $flags = [
                 'uz' => 'https://flagcdn.com/w40/uz.png',
                 'en' => 'https://flagcdn.com/w40/gb.png',
@@ -74,15 +90,14 @@
     <section class="journey-section">
         <div class="section-header">
             <h2>{{ __('messages.Plan Your Journey') }}</h2>
-            <p>{{ __('messages.Everything you need to explore Uzbekistan is at your fingertips') }}</p>
+            <p>{{ __('messages.Everything a traveler needs can be found on this website') }}</p>
         </div>
         <div class="cards-container">
-            <!-- First Card - Interactive Map -->
             <div class="card">
                 <a href="{{ route('map-road') }}" style="text-decoration: none; color: inherit;">
                     <div class="card-image-container">
-                        <img src="{{asset('images/map1.png')}}"
-                             alt="Uzbekistan map" class="card-image" loading="lazy">
+                        <img src="{{asset('images/1.png')}}"
+                              alt="Uzbekistan map" class="card-image" loading="lazy">
                     </div>
                     <div class="card-content">
                         <h3>{{ __('messages.Explore Interactive Map') }}</h3>
@@ -92,12 +107,11 @@
                 </a>
             </div>
 
-            <!-- Second Card - Browse Materials -->
             <div class="card">
                 <a href="{{ route('libraries.index') }}" style="text-decoration: none; color: inherit;">
                     <div class="card-image-container">
-                        <img src="{{asset('images/library1.png')}}"
-                             alt="Uzbekistan map" class="card-image" loading="lazy">
+                        <img src="{{asset('images/2.png')}}"
+                              alt="Uzbekistan map" class="card-image" loading="lazy">
                     </div>
                     <div class="card-content">
                         <h3>{{ __('messages.Online Library') }}</h3>
@@ -107,12 +121,11 @@
                 </a>
             </div>
 
-            <!-- Third Card - Current Events -->
             <div class="card">
                 <a href="{{ route('events.index') }}" style="text-decoration: none; color: inherit;">
                     <div class="card-image-container">
-                        <img src="{{asset('images/event1.png')}}"
-                             alt="Uzbekistan map" class="card-image" loading="lazy">
+                        <img src="{{asset('images/3.png')}}"
+                              alt="Uzbekistan map" class="card-image" loading="lazy">
                     </div>
                     <div class="card-content">
                         <h3>{{ __('messages.Events & Festivals') }}</h3>

@@ -48,6 +48,7 @@ Route::get('/events/category/{id}', [ControllersEventController::class, 'filterC
 
 Route::post('/send-material', [EmailController::class, 'sendMaterial'])->name('send.material');
 Route::post('/send-event', [EmailController::class, 'sendEvent'])->name('send.event');
+Route::post('/send-map-email', [EmailController::class, 'sendMap'])->name('send.map.email');
 
 
 

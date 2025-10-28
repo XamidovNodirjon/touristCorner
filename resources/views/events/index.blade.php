@@ -6,15 +6,64 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('messages.Events & Activities - Welcome to Uzbekistan') }}</title>
 
-    <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/library.css') }}">
     <link rel="stylesheet" href="{{ asset('css/events.css') }}">
-    
+    <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
+
     <style>
+        
+        body {
+            background-image: url("{{ asset('fon/fon.png') }}");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed; /* Sahifani aylantirganda (scroll) rasm joyida turishi uchun */
+            padding-top: 80px; /* Headerning qotirilishini hisobga olib, bodyga padding berish */
+        }
+        /* Headerni qadash uchun stil */
+        .header-bar {
+            background-color: #1C3F3A;
+            border-bottom: 1px solid #EBE9DA;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Scroll-to-Top Button Stili (PASTKI O'NG UCHUN TASDIQLANDI) */
+        .scroll-to-top-btn {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            border: none;
+            outline: none;
+            background-color: #1C3F3A;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, opacity 0.3s;
+            opacity: 0.8;
+        }
+
+        .scroll-to-top-btn:hover {
+            background-color: #2b5c54;
+            opacity: 1;
+        }
+
+        /* Bodyga padding qo'shish (fixed header uchun) */
+        body {
+            padding-top: 80px;
+        }
+
         /* Category buttons */
         .category-bar {
             display: flex;
@@ -32,11 +81,37 @@
             transition: all 0.2s ease;
             cursor: pointer;
         }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+
         .card {
             display: flex;
             flex-direction: column;
             height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: #fff;
+            margin-top: 20px;
         }
+
+        .card:not(:first-child) {
+            margin-top: 24px;
+        }
+
+        .card img.card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+
 
         .category-button:hover {
             background: #007bff;
@@ -96,19 +171,55 @@
         .loading-modal.show {
             display: flex;
         }
+
+        .left-logo img {
+            max-width: 130px;
+            height: auto;
+            display: block;
+        }
+
+        /* YANGI: Virtual Keyboard stili */
+        #virtual-keyboard {
+            display: none; 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            background: #222; 
+            padding: -20px; 
+            z-index: 9999; 
+            text-align: center; 
+            border-top: 3px solid #444; 
+            user-select: none;
+        }
+        /* Email Modal stili */
+        .modal-content {
+            /* Hozirgi stillar: (background, border-radius, etc.) */
+            position: relative !important; 
+            /* Agar modal vertikal centrda bo'lsa, quyidagini qo'shamiz: */
+            transition: transform 0.3s ease-out; /* Silliq ko'tarilish uchun */
+        }
+
+        /* Yangi stil: klaviatura chiqishi uchun modalni surish */
+        .modal-content.keyboard-active {
+            /* 250px bu klaviaturaning taxminiy balandligi. 
+            Buni kamroq yoki ko'proq qilib sinab ko'rishingiz mumkin. */
+            transform: translateY(-150px); 
+            /* Agar modal mutlaq centrda bo'lmasa, transform: translateY(0) ishlashi ham mumkin,
+            ammo bu yechim centrda bo'lgan holat uchun universalroq. */
+        }
     </style>
 </head>
 
 <body>
 <header class="header-bar">
-    <a href="{{route('welcome')}}" style="text-decoration: dashed;">
-        <div class="header-left">
-            <div class="logo-text">
-                <h1>{{ __('messages.Welcome to Uzbekistan') }}</h1>
-                <p>{{ __('messages.Your Gateway to the Heart of Central Asia') }}</p>
-            </div>
-        </div>
-    </a>
+    <div class="header-left">
+        <a href="{{route('welcome')}}">
+                <div class="left-logo">
+                    <img src="{{asset('/logo/logo.png')}}" alt="Logo">
+                </div>
+            </a>
+    </div>
 
     <div class="header-right">
         <nav class="nav-links">
@@ -119,7 +230,7 @@
         </nav>
 
         @php
-            $currentLocale = session('locale', 'uz'); // Default — uz
+            $currentLocale = session('locale', 'en'); // Default — uz
             $flags = [
                 'uz' => 'https://flagcdn.com/w40/uz.png',
                 'en' => 'https://flagcdn.com/w40/gb.png',
@@ -156,15 +267,10 @@
 
 <main>
     <div class="container">
-        <div class="page-header">
-            <h2>{{ __('messages.Find top events and celebrations across Uzbekistan') }}</h2>
-            <p>{{ __('messages.Learn about upcoming cultural and tourism events in Uzbekistan') }}</p>
-        </div>
-
         <div class="category-bar mb-3">
         <button class="category-button {{ request()->is('events') ? 'active' : '' }}"
                 onclick="window.location='{{ route('events.index') }}'">
-            Barchasi
+            {{ __('messages.All') }}
         </button>
 
         @foreach($categories as $category)
@@ -181,31 +287,38 @@
                 <div class="col-md-4 mb-3">
                     <div class="card">
                         <img src="{{ asset('storage/' . $event->image) }}"
-                         alt="{{ $event->title_uz }}"
-                         class="card-image"
-                         onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80'">
+                             alt="{{ $event->title_uz }}"
+                             class="card-image"
+                             onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80'">
                         
                         <div class="card-content">
                             <div class="tag-container">
                                 <span class="tag {{ $event->category->slug ?? 'default' }}">{{ $event->category->name ?? 'Tadbir' }}</span>
                                 <span class="price">
-                                    {!! $event->price > 0 
+                                    {!! $event->price > 0
                                         ? 'UZS ' . number_format($event->price, 0, '.', ' ') 
                                         : '<i class="fa fa-ticket"></i> Free' !!}
                                 </span>
                             </div>
-
                             <h5 class="card-title">{{ $event->title }}</h5>
                             <p class="card-description">{{ Str::limit($event->description, 80) }}</p>
 
                             <div class="card-details">
                                 <div class="detail-item">
                                     <i class="far fa-calendar-alt"></i>
-                                    <span>{{ \Carbon\Carbon::parse($event->event_date)->format('Y-m-d') }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <i class="far fa-clock"></i>
-                                    <span>{{ \Carbon\Carbon::parse($event->time)->format('H:i') }}</span>
+                                   <span>
+                                        @if($event->start_date && $event->end_date)
+                                            {{ \Carbon\Carbon::parse($event->start_date)->format('Y-m-d') }}
+                                            –
+                                            {{ \Carbon\Carbon::parse($event->end_date)->format('Y-m-d') }}
+                                        @elseif($event->start_date)
+                                            {{ \Carbon\Carbon::parse($event->start_date)->format('Y-m-d') }}
+                                        @elseif($event->end_date)
+                                            {{ \Carbon\Carbon::parse($event->end_date)->format('Y-m-d') }}
+                                        @else
+                                            <em>Sana ko‘rsatilmagan</em>
+                                        @endif
+                                    </span>
                                 </div>
                                 <div class="detail-item">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -215,14 +328,13 @@
                             
                             <button class="card-button"
                                 onclick="openEmailModal(
-                                    '{{ $event->id }}',
-                                    '{{ $event->title }}',
-                                    '{{ $event->date }}',
-                                    '{{ $event->location }}',
-                                    '{{ $event->description }}',
-                                    '{{ $event->image }}',
-                                    '{{ $event->time }}'
-                                )">
+                                            '{{ $event->id }}',
+                                            '{{ $event->title }}',
+                                            '{{ $event->date }}',
+                                            '{{ $event->location }}',
+                                            '{{ $event->description }}',
+                                            '{{ $event->image }}',
+                                        )">
                                 <i class="fas fa-envelope"></i> {{ __('messages.Send Details') }}
                             </button>
                         </div>
@@ -235,7 +347,10 @@
     @endif
 </main>
 
-<!-- Email Modal -->
+<button onclick="scrollToTop()" id="scrollToTopBtn" title="Yuqoriga" class="scroll-to-top-btn">
+    <i class="fas fa-chevron-up"></i>
+</button>
+
 <div class="modal" id="emailModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -246,28 +361,28 @@
             <p><strong>{{ __('messages.Event Name:') }}</strong> <span id="modalMaterialName"></span></p>
             <br>
             <p><strong>{{ __('messages.Description:') }}</strong> <span id="modalMaterialDescription"></span></p>
-
-            <div class="form-group">
-                <label for="emailInput">{{ __('messages.Email Address') }}</label>
-                <input type="email" id="emailInput" class="form-input" placeholder="sizning.email@example.com" required>
+            <br>
+            <div class="form-group mb-4">
+                <label for="emailInput" class="mb-2"><strong>{{ __('messages.Email Address') }}</strong></label>
+                <input type="email" id="emailInput" class="form-input" placeholder=".email@example.com" onclick="showKeyboard()" require>
+                <div id="virtual-keyboard" style="display:none;"></div>
             </div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-secondary" onclick="closeModal()">{{ __('messages.Cancel') }}</button>
-            <button class="btn btn-primary" onclick="sendEmail()"><i class="fas fa-paper-plane"></i> {{ __('messages.Send') }}</button>
+            <button class="btn btn-primary" onclick="sendEmail()"><i class="fas fa-paper-plane"></i> {{ __('messages.Send to email') }}</button>
         </div>
     </div>
 </div>
 
-<!-- Success Modal -->
 <div class="modal" id="successModal">
     <div class="modal-content success-modal">
         <div class="modal-header">
-            <h3><i class="fas fa-check-circle text-success"></i> Muvaffaqiyatli!</h3>
+            <h3><i class="fas fa-check-circle text-success"></i> {{ __('messages.Success')}}!</h3>
             <button class="modal-close" onclick="closeSuccessModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <p>Material email manzilingizga muvaffaqiyatli yuborildi ✅</p>
+            <p>{{ __('messages.Material sent successfully')}}✅</p>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" onclick="closeSuccessModal()">OK</button>
@@ -275,7 +390,6 @@
     </div>
 </div>
 
-<!-- Loading Animation Modal -->
 <div class="loading-modal" id="loadingModal">
     <div class="loading-animation">
         <svg viewBox="0 0 100 100">
@@ -283,16 +397,100 @@
             <circle cx="50" cy="50" r="30" fill="none" stroke="#ffd700" stroke-width="4" stroke-dasharray="15,10"/>
             <circle cx="50" cy="50" r="20" fill="none" stroke="#ff4500" stroke-width="3" stroke-dasharray="10,10"/>
         </svg>
-        <span class="loading-text">Yuborilmoqda...</span>
+        
     </div>
 </div>
+<script>
+    // === Virtual Keyboard Logic ===
+    let isUpperCase = false; // katta/kichik holat
+    const keyboardLayout = [
+    ['1','2','3','4','5','6','7','8','9','0','-','_','←'],
+    ['q','w','e','r','t','y','u','i','o','p','@'],
+    ['a','s','d','f','g','h','j','k','l','.','!','?'],
+    ['CAPS','z','x','c','v','b','n','m',':',';','CAPS'],
+    // ['Enter','CLOSE']
+    ];
 
+    function showKeyboard() {
+        const keyboard = document.getElementById('virtual-keyboard');
+        keyboard.style.display = 'block';
+        keyboard.innerHTML = '';
+        renderKeyboard();
+    }
+
+    function renderKeyboard() {
+        const keyboard = document.getElementById('virtual-keyboard');
+        keyboard.innerHTML = '';
+
+        keyboardLayout.forEach(row => {
+            const rowDiv = document.createElement('div');
+            rowDiv.style.marginBottom = '8px';
+
+            row.forEach(key => {
+            const btn = document.createElement('button');
+            btn.textContent = isUpperCase && key.length === 1 ? key.toUpperCase() : key;
+            btn.style = `
+                margin:3px; 
+                padding:12px 16px;
+                font-size:18px;
+                border:none;
+                border-radius:6px; 
+                background:#444; 
+                color:white; 
+                cursor:pointer;
+                min-width:50px;
+            `;
+
+            btn.onclick = () => handleKeyPress(key);
+            rowDiv.appendChild(btn);
+            });
+
+            keyboard.appendChild(rowDiv);
+        });
+    }
+
+    function handleKeyPress(key) {
+        const input = document.getElementById('emailInput');
+
+        switch (key) {
+            case '←':
+            input.value = input.value.slice(0, -1);
+            break;
+            case 'Space':
+            input.value += ' ';
+            break;
+            case 'Enter':
+            // Enter tugmasi bu yerda e'tiborga olinmaydi, chunki modalda submit tugmasi bor
+            break;
+            case 'CAPS':
+            isUpperCase = !isUpperCase;
+            renderKeyboard();
+            break;
+            case 'CLOSE':
+            document.getElementById('virtual-keyboard').style.display = 'none';
+            break;
+            default:
+            const charToAdd = isUpperCase ? key.toUpperCase() : key;
+            input.value += charToAdd;
+            break;
+        }
+
+        input.focus();
+    }
+    
+    // Virtual Keyboard uchun bodyga touch event qo'shish, agar kerak bo'lsa (Mobil uchun)
+    // window.addEventListener('DOMContentLoaded', () => {
+    //     const input = document.getElementById('emailInput');
+    //     input.focus();
+    // });
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const langSelectBtn = document.getElementById('lang-select-btn');
         const langDropdown = document.getElementById('lang-dropdown');
         const selectedFlag = document.getElementById('selected-flag');
         const selectedLangText = document.getElementById('selected-lang-text');
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn'); 
 
         langSelectBtn.addEventListener('click', function() {
             langDropdown.classList.toggle('show');
@@ -320,14 +518,34 @@
                 langDropdown.classList.remove('show');
             }
         });
-        
+
+        // YANGI: Scroll funksiyasini yuklash
+        window.onscroll = function() {
+            scrollFunction();
+        };
+
+        function scrollFunction() {
+            // 300px dan ko'proq pastga aylantirilganda tugmani ko'rsatish
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollToTopBtn.style.display = "block";
+            } else {
+                scrollToTopBtn.style.display = "none";
+            }
+        }
     });
-    document.addEventListener('click', () => langDropdown.classList.remove('show'));
-    
+
+    // YANGI: Sahifani yuqoriga aylantirish funksiyasi
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' 
+        });
+    }
+
     let selectedEvent = {};
 
-    function openEmailModal(id, title_uz, date, location, description_uz, image, time) {
-        selectedEvent = { id, title_uz, date, location, description_uz, image, time };
+    function openEmailModal(id, title_uz, date, location, description_uz, image) {
+        selectedEvent = { id, title_uz, date, location, description_uz, image };
 
         document.getElementById('modalMaterialName').textContent = title_uz;
         document.getElementById('modalMaterialDescription').textContent = description_uz;

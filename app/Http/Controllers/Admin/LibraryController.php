@@ -23,15 +23,17 @@ class LibraryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title_uz' => 'required|string|max:255',
-            'title_ru' => 'required|string|max:255',
-            'title_en' => 'required|string|max:255',
-            'description_uz' => 'required|string',
-            'description_en' => 'required|string',
-            'description_ru' => 'required|string',
+            'title_uz' => 'nullable|string|max:255',
+            'title_ru' => 'nullable|string|max:255',
+            'title_en' => 'nullable|string|max:255',
+            'description_uz' => 'nullable|string',
+            'description_en' => 'nullable|string',
+            'description_ru' => 'nullable|string',
             'image' => 'nullable|image|max:10240', // 10 MB
-            'file_path_ru' => 'required|file|max:102400', // 100 MB
-            'file_path_en' => 'required|file|max:102400', // 100 MB
+            'file_path_ru' => 'nullable|url|max:255',
+            'file_path_en' => 'nullable|url|max:255',
+            'file_path_uz' => 'nullable|url|max:255',
+            'category_id' => 'nullable|integer|exists:library_categories,id',
         ]);
 
         $library = new Library();
@@ -47,63 +49,53 @@ class LibraryController extends Controller
             $library->image = $request->file('image')->store('libraries/images', 'public');
         }
 
-        if ($request->hasFile('file_path_ru')) {
-            $library->file_path_ru = $request->file('file_path_ru')->store('libraries/files_ru', 'public');
-        }
-
-        if ($request->hasFile('file_path_en')) {
-            $library->file_path_en = $request->file('file_path_en')->store('libraries/files_en', 'public');
-        }
+        // Fayl o‘rniga URL saqlanadi
+        $library->file_path_ru = $request->file_path_ru;
+        $library->file_path_en = $request->file_path_en;
+        $library->file_path_uz = $request->file_path_uz;
 
         $library->save();
 
         return redirect()->back()->with('success', 'Yangi ma’lumot muvaffaqiyatli qo‘shildi!');
     }
 
+
     public function update(Request $request, $id)
     {
         $library = Library::findOrFail($id);
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description_uz' => 'required|string',
-            'description_en' => 'required|string',
-            'description_ru' => 'required|string',
-            'image' => 'nullable|image|max:10240',
-            'file_path_ru' => 'nullable|file|max:102400',
-            'file_path_en' => 'nullable|file|max:102400',
+        $validated = $request->validate([
+            'title_uz' => 'nullable|string|max:255',
+            'title_en' => 'nullable|string|max:255',
+            'title_ru' => 'nullable|string|max:255',
+            'description_uz' => 'nullable|string',
+            'description_en' => 'nullable|string',
+            'description_ru' => 'nullable|string',
+            'image' => 'nullable|image|max:10240', // 10 MB
+            'file_path_ru' => 'nullable|url|max:255',
+            'file_path_en' => 'nullable|url|max:255',
+            'file_path_uz' => 'nullable|url|max:255',
+            'category_id' => 'nullable|integer|exists:library_categories,id',
         ]);
 
-        $library->title = $request->title;
-        $library->description_uz = $request->description_uz;
-        $library->description_en = $request->description_en;
-        $library->description_ru = $request->description_ru;
-
-        if ($request->hasFile('image')) {
-            if ($library->image && Storage::disk('public')->exists($library->image)) {
-                Storage::disk('public')->delete($library->image);
+        // 🔹 Faqat requestda kelgan maydonlarni yangilaymiz
+        foreach ($validated as $key => $value) {
+            if ($key === 'image' && $request->hasFile('image')) {
+                if ($library->image && Storage::disk('public')->exists($library->image)) {
+                    Storage::disk('public')->delete($library->image);
+                }
+                $library->image = $request->file('image')->store('libraries/images', 'public');
+            } elseif ($key !== 'image' && $value !== null) {
+                $library->$key = $value;
             }
-            $library->image = $request->file('image')->store('libraries/images', 'public');
-        }
-
-        if ($request->hasFile('file_path_ru')) {
-            if ($library->file_path_ru && Storage::disk('public')->exists($library->file_path_ru)) {
-                Storage::disk('public')->delete($library->file_path_ru);
-            }
-            $library->file_path_ru = $request->file('file_path_ru')->store('libraries/files_ru', 'public');
-        }
-
-        if ($request->hasFile('file_path_en')) {
-            if ($library->file_path_en && Storage::disk('public')->exists($library->file_path_en)) {
-                Storage::disk('public')->delete($library->file_path_en);
-            }
-            $library->file_path_en = $request->file('file_path_en')->store('libraries/files_en', 'public');
         }
 
         $library->save();
 
         return redirect()->back()->with('success', 'Ma’lumot muvaffaqiyatli yangilandi!');
     }
+
+
 
     public function destroy($id)
     {
@@ -112,15 +104,6 @@ class LibraryController extends Controller
         if ($library->image && Storage::disk('public')->exists($library->image)) {
             Storage::disk('public')->delete($library->image);
         }
-
-        if ($library->file_path_ru && Storage::disk('public')->exists($library->file_path_ru)) {
-            Storage::disk('public')->delete($library->file_path_ru);
-        }
-
-        if ($library->file_path_en && Storage::disk('public')->exists($library->file_path_en)) {
-            Storage::disk('public')->delete($library->file_path_en);
-        }
-
         $library->delete();
 
         return redirect()->back()->with('success', 'Ma’lumot muvaffaqiyatli o‘chirildi!');

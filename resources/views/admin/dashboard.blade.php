@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('content') 
+@section('content')
     <h4 class="mb-4 text-dark">Dashboard Bosh sahifasi</h4>
     
     <div class="alert alert-info border-0 rounded-0 border-start border-5 border-info" role="alert">
@@ -8,7 +8,7 @@
         
     <div class="row g-4 mb-5">
         <div class="col-lg-3 col-md-6">
-            <a href="{{ route('admin.events') }}" class="stretched-link text-decoration-none">
+            <a href="{{ route('admin.events') }}" class="text-decoration-none">
                 <div class="card shadow h-100 border-start border-success">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -26,7 +26,7 @@
         </div>
 
         <div class="col-lg-3 col-md-6">
-            <a href="{{route('admin.libraries')}}" class="stretched-link text-decoration-none">
+            <a href="{{route('admin.libraries')}}" class="text-decoration-none">
                 <div class="card shadow h-100 border-start border-warning">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -43,7 +43,7 @@
             </a>
         </div>
         <div class="col-lg-3 col-md-6">
-            <a href="{{route('admin.maps')}}" class="stretched-link text-decoration-none">
+            <a href="{{route('admin.maps')}}" class="text-decoration-none">
                 <div class="card shadow h-100 border-start border-primary">
                     <div class="card-body">
                         <div class="row align-items-center">

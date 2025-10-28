@@ -9,6 +9,10 @@ body {
     background-color: #E0E9E9;
     color: #1C3F3A;
     min-height: 100vh;
+    background-image: url("{{ asset('public/fon/fon.png') }}");
+    background-repeat: no-repeat;
+    background-size: cover; /* Rasmni butun sahifani qoplash uchun cho'zish */
+    background-attachment: fixed; /* Sahifani aylantirganda (scroll) rasm joyida turishi uchun */
 }
 
 /* Header Styles */
@@ -19,6 +23,7 @@ body {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
 }
 
 .header-left {
@@ -28,25 +33,24 @@ body {
 }
 
 .logo-icon {
-    width: 48px;
-    height: 48px;
-    background-color: rgba(245, 236, 236, 0.15);
-    border-radius: 8px;
+    /* remove background box - keep container for alignment only */
+    width: 90px;
+    height: auto;
+    background: transparent;
+    border-radius: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: #FFFFFF;
-    font-size: 24px;
+    justify-content: flex-start;
 }
 
 /* Ensure logo image fits the icon box exactly */
 .logo-icon .logo-image,
 .logo-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; 
+    width: 198px;
+    height: 62px;
+    object-fit: contain;
     display: block;
-    border-radius: 6px; /* match icon rounding */
+    border-radius: 0; /* no rounded rectangle */
 }
 
 .logo-text h1 {
@@ -60,7 +64,7 @@ body {
 .logo-text p {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.8);
-    font-weight: 400;
+    font-weight: 40;
 }
 
 .header-right {
@@ -361,12 +365,12 @@ main {
     }
 }
 
-/* Welcome page background */
-.welcome-body {
-    /* use absolute path from public/ */
-    background-image: url('/public/images/fon.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+
+.hero-banner {
+    background-image: url('/images/fon.png');
+    background-size: contain; /* or specify pixel width */
+    background-position: center top;
     background-repeat: no-repeat;
+    height: 220px; /* control visible size */
 }
+

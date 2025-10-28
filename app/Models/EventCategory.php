@@ -16,8 +16,8 @@ class EventCategory extends Model
 
     public function getNameAttribute()
     {
-        $lang = session('locale', 'uz');
-        return $this->{'name_' . $lang} ?? $this->name_uz;
+        $lang = session('locale', 'en');
+        return $this->{'name_' . $lang} ?? $this->name_en;
     }
 
 }

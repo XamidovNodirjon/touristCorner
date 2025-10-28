@@ -60,7 +60,6 @@
                                 <th>Kategoriya</th>
                                 <th>Tavsif</th>
                                 <th>Rasm</th>
-                                <th>Sana</th>
                                 <th>Joylashuv</th>
                                 <th>Narx</th>
                                 <th class="text-center">Amallar</th>
@@ -80,7 +79,6 @@
                                         <span class="text-muted">Yo‘q</span>
                                     @endif
                                 </td>
-                                <td>{{ $event->event_date?->format('Y-m-d') ?? '—' }}</td>
                                 <td>{{ $event->location ?? '—' }}</td>
                                 <td>{{ $event->price ? '$' . number_format($event->price, 2) : 'Bepul' }}</td>
                                 <td class="text-center">
@@ -146,13 +144,14 @@
                                                         <textarea name="description_uz" class="form-control" rows="3">{{ old('description_uz', $event->description_uz) }}</textarea>
                                                     </div>
                                                     <div class="col-md-4 mb-3">
-                                                        <label class="form-label">Tavsif (EN)</label>
-                                                        <textarea name="description_en" class="form-control" rows="3">{{ old('description_en', $event->description_en) }}</textarea>
-                                                    </div>
-                                                    <div class="col-md-4 mb-3">
                                                         <label class="form-label">Tavsif (RU)</label>
                                                         <textarea name="description_ru" class="form-control" rows="3">{{ old('description_ru', $event->description_ru) }}</textarea>
                                                     </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label class="form-label">Tavsif (EN)</label>
+                                                        <textarea name="description_en" class="form-control" rows="3">{{ old('description_en', $event->description_en) }}</textarea>
+                                                    </div>
+                                                    
                                                 </div>
 
                                                 <div class="mb-3">
@@ -163,19 +162,19 @@
                                                     @endif
                                                     <input type="file" name="image" class="form-control mt-1">
                                                 </div>
-
                                                 <div class="row">
                                                     <div class="col-md-4 mb-3">
-                                                        <label class="form-label">Tadbir sanasi</label>
-                                                        <input type="date" name="event_date" class="form-control"
-                                                            value="{{ old('event_date', $event->event_date?->format('Y-m-d')) }}">
+                                                        <label class="form-label">Boshlanish sanasi</label>
+                                                        <input type="date" name="start_date" class="form-control"
+                                                            value="{{ old('start_date', $event->start_date) }}">
                                                     </div>
                                                     <div class="col-md-4 mb-3">
-                                                        <label class="form-label">Vaqt</label>
-                                                        <input type="time" name="time" class="form-control" value="{{ old('time', $event->time) }}">
+                                                        <label class="form-label">Tugash sanasi</label>
+                                                        <input type="date" name="end_date" class="form-control"
+                                                            value="{{ old('end_date', $event->end_date) }}">
                                                     </div>
                                                     <div class="col-md-4 mb-3">
-                                                        <label class="form-label">Narx ($)</label>
+                                                        <label class="form-label">Narx</label>
                                                         <input type="number" step="0.01" name="price" class="form-control" value="{{ old('price', $event->price) }}">
                                                     </div>
                                                 </div>
@@ -258,35 +257,33 @@
                             @endforeach
                         </select>
                     </div>
-
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Tavsif (UZ)</label>
                             <textarea name="description_uz" class="form-control" rows="3">{{ old('description_uz') }}</textarea>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Tavsif (EN)</label>
-                            <textarea name="description_en" class="form-control" rows="3">{{ old('description_en') }}</textarea>
-                        </div>
-                        <div class="col-md-4 mb-3">
                             <label class="form-label">Tavsif (RU)</label>
                             <textarea name="description_ru" class="form-control" rows="3">{{ old('description_ru') }}</textarea>
                         </div>
-                    </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Tavsif (EN)</label>
+                            <textarea name="description_en" class="form-control" rows="3">{{ old('description_en') }}</textarea>
+                        </div>
+                   </div>
 
                     <div class="mb-3">
                         <label class="form-label">Rasm (Muqova) <span class="text-danger">*</span></label>
                         <input type="file" name="image" class="form-control" required>
                     </div>
-
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Tadbir sanasi</label>
-                            <input type="date" name="event_date" class="form-control" value="{{ old('event_date') }}">
+                            <label class="form-label">Boshlanish sanasi</label>
+                            <input type="date" name="start_date" class="form-control" value="{{ old('start_date') }}">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Vaqt</label>
-                            <input type="time" name="time" class="form-control" value="{{ old('time') }}">
+                            <label class="form-label">Tugash sanasi</label>
+                            <input type="date" name="end_date" class="form-control" value="{{ old('end_date') }}">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Narx (UZS)</label>

@@ -82,7 +82,6 @@
                         <th>Tavsif</th>
                         <th>Kategoriya</th>
                         <th>Rasm</th>
-                        <th>Fayl</th>
                         <th>Yaratilgan sana</th>
                         <th class="text-center">Harakatlar</th>
                     </tr>
@@ -102,16 +101,7 @@
                                     <span class="text-muted">Rasm yo‘q</span>
                                 @endif
                             </td>
-                            <td>
-                                @if($library->file_path_ru)
-                                    <a href="{{ asset('storage/' . $library->file_path_ru) }}" download
-                                       class="btn btn-sm btn-outline-success">
-                                        <i class="bi bi-download"></i> Yuklab olish
-                                    </a>
-                                @else
-                                    <span class="text-muted">Fayl yo‘q</span>
-                                @endif
-                            </td>
+                            
                             <td>{{ $library->created_at->format('d.m.Y') }}</td>
                             <td class="text-center">
                                 {{-- Edit button --}}
@@ -143,46 +133,45 @@
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Sarlavha Uz<span class="text-danger">*</span></label>
-                                                    <input type="text" name="title_uz" value="{{ $library->title_uz }}" class="form-control" required>
+                                                    <label class="form-label">Sarlavha Uz</label>
+                                                    <input type="text" name="title_uz" value="{{ $library->title_uz }}" class="form-control" >
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Sarlavha Ru<span class="text-danger">*</span></label>
-                                                    <input type="text" name="title_ru" value="{{ $library->title_ru }}" class="form-control" required>
+                                                    <label class="form-label">Sarlavha Ru</label>
+                                                    <input type="text" name="title_ru" value="{{ $library->title_ru }}" class="form-control" >
                                                 </div>
                                             
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Sarlavha En<span class="text-danger">*</span></label>
-                                                    <input type="text" name="title_en" value="{{ $library->title_en }}" class="form-control" required>
+                                                    <label class="form-label">Sarlavha En</label>
+                                                    <input type="text" name="title_en" value="{{ $library->title_en }}" class="form-control" >
                                                 </div>
 
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Tavsif (O'zbekcha) <span class="text-danger">*</span></label>
-                                                    <textarea name="description_uz" class="form-control" rows="3" required>{{ $library->description_uz }}</textarea>
+                                                    <label class="form-label">Tavsif (O'zbekcha)</label>
+                                                    <textarea name="description_uz" class="form-control" rows="3">{{ $library->description_uz }}</textarea>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Tavsif (Inglizcha) <span class="text-danger">*</span></label>
-                                                    <textarea name="description_en" class="form-control" rows="3" required>{{ $library->description_en }}</textarea>
+                                                    <label class="form-label">Tavsif (Inglizcha)</label>
+                                                    <textarea name="description_en" class="form-control" rows="3">{{ $library->description_en }}</textarea>
                                                 </div>
 
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Tavsif (Ruscha) <span class="text-danger">*</span></label>
-                                                    <textarea name="description_ru" class="form-control" rows="3" required>{{ $library->description_ru }}</textarea>
+                                                    <label class="form-label">Tavsif (Ruscha)</label>
+                                                    <textarea name="description_ru" class="form-control" rows="3">{{ $library->description_ru }}</textarea>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Category <span class="text-danger">*</span></label>
-                                                    <select name="category_id" class="form-select" required>
+                                                    <label class="form-label">Category</label>
+                                                    <select name="category_id" class="form-select">
                                                         <option value=""> Kategoriyani tanlang </option>
                                                         @foreach ($categories as $category)
                                                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
-
 
                                                 <div class="col-md-6 mb-3">
                                                     <label class="form-label">Hozirgi rasm:</label><br>
@@ -196,26 +185,17 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Hozirgi fayl (Inglizcha):</label><br>
-                                                    @if($library->file_path_en)
-                                                        <a href="{{ asset('storage/' . $library->file_path_en) }}" target="_blank" class="btn btn-outline-success btn-sm">
-                                                            <i class="bi bi-download"></i> Yuklab olish
-                                                        </a>
-                                                    @else
-                                                        <span class="text-muted">Fayl yo‘q</span>
-                                                    @endif
-                                                    <input type="file" name="file_path_en" class="form-control mt-2" accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.png">
+                                                    <label class="form-label">Hozirgi Url (EN):</label><br>
+                                                    <input type="text" name="file_path_en" value="{{ $library->file_path_en }}" class="form-control" >
+                                                
                                                 </div>
                                                 <div class="col-md-6 mb-3">
-                                                    <label class="form-label">Hozirgi fayl (Ruscha):</label><br>
-                                                    @if($library->file_path_ru)
-                                                        <a href="{{ asset('storage/' . $library->file_path_ru) }}" target="_blank" class="btn btn-outline-success btn-sm">
-                                                            <i class="bi bi-download"></i> Yuklab olish
-                                                        </a>
-                                                    @else
-                                                        <span class="text-muted">Fayl yo‘q</span>
-                                                    @endif
-                                                    <input type="file" name="file_path_ru" class="form-control mt-2" accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.png">
+                                                    <label class="form-label">Hozirgi Url (RU):</label><br>
+                                                    <input type="text" name="file_path_ru" value="{{ $library->file_path_ru }}" class="form-control" >
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="form-label">Hozirgi Url (UZ):</label><br>
+                                                    <input type="text" name="file_path_uz" value="{{ $library->file_path_uz }}" class="form-control" >
                                                 </div>
                                             </div>
                                         </div>
@@ -279,31 +259,31 @@
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Sarlavha Uz<span class="text-danger">*</span></label>
-                    <input type="text" name="title_uz" class="form-control" required>
+                    <label class="form-label">Sarlavha Uz</label>
+                    <input type="text" name="title_uz" class="form-control">
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Sarlavha En<span class="text-danger">*</span></label>
-                    <input type="text" name="title_en" class="form-control" required>
+                    <label class="form-label">Sarlavha En</label>
+                    <input type="text" name="title_en" class="form-control">
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Sarlavha Ru<span class="text-danger">*</span></label>
-                    <input type="text" name="title_ru" class="form-control" required>
+                    <label class="form-label">Sarlavha Ru</label>
+                    <input type="text" name="title_ru" class="form-control">
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Tavsif (O'zbekcha) <span class="text-danger">*</span></label>
-                    <textarea name="description_uz" class="form-control" rows="3" required></textarea>
+                    <label class="form-label">Tavsif (O'zbekcha)</label>
+                    <textarea name="description_uz" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Tavsif (Inglizcha) <span class="text-danger">*</span></label>
-                    <textarea name="description_en" class="form-control" rows="3" required></textarea>
+                    <label class="form-label">Tavsif (Inglizcha)</label>
+                    <textarea name="description_en" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Tavsif (Ruscha) <span class="text-danger">*</span></label>
-                    <textarea name="description_ru" class="form-control" rows="3" required></textarea>
+                    <label class="form-label">Tavsif (Ruscha)</label>
+                    <textarea name="description_ru" class="form-control" rows="3"></textarea>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Category <span class="text-danger">*</span></label>
@@ -314,26 +294,30 @@
                         @endforeach
                     </select>
                 </div>
-
-
             </div>
             
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Rasm <span class="text-danger">*</span></label>
+                    <label class="form-label">Rasim <span class="text-danger">*</span></label>
                     <input type="file" name="image" class="form-control" accept="image/*" required>
                 </div>
+
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Fayl (maksimal 100 MB) Ruscha <span class="text-danger">*</span></label>
-                    <input type="file" name="file_path_ru" class="form-control" accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.png" required>
+                    <label class="form-label">RU</label>
+                    <input type="url" name="file_path_ru" class="form-control">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">EN</label>
+                    <input type="url" name="file_path_en" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">UZ</label>
+                    <input type="url" name="file_path_uz" class="form-control">
                 </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Fayl (maksimal 100 MB) English <span class="text-danger">*</span></label>
-                <input type="file" name="file_path_en" class="form-control" accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.png" required>
-            </div>
-        </div>
 
+        </div>
         <div class="modal-footer bg-light">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
           <button type="submit" class="btn btn-primary">Saqlash</button>

@@ -17,10 +17,24 @@ class Library extends Model
         'image',
         'file_path_ru',
         'file_path_en',
+        'file_path_uz',
     ];
 
     public function category()
     {
         return $this->belongsTo(LibraryCategory::class, 'category_id');
+    }
+
+    public function getTitleAttribute()
+    {
+        $lang = session('locale', 'uz'); // default uz
+        return $this->{'title_' . $lang} ?? $this->title_uz;
+    }
+
+    // 🔥 Dynamic description accessor
+    public function getDescriptionAttribute()
+    {
+        $lang = session('locale', 'uz');
+        return $this->{'description_' . $lang} ?? $this->description_uz;
     }
 }

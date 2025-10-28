@@ -18,4 +18,24 @@ class Map extends Model
         'longitude',
         'image'
     ];
+
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
+
+    public function getTitleAttribute()
+    {
+        $lang = session('locale', 'en'); // default en
+        return $this->{'title_' . $lang} ?? $this->title_en;
+    }
+
+    // 🔥 Dynamic description accessor
+    public function getDescriptionAttribute()
+    {
+        $lang = session('locale', 'en');
+        return $this->{'description_' . $lang} ?? $this->description_en;
+    }
 }
