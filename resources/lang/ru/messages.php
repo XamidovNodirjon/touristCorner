@@ -42,6 +42,7 @@ return [
     'Uzbekistan Map – Interactive map'=>'Uzbekistan Map – Interactive map',
     'Send event details via email' =>'Отправить подробности мероприятия по электронной почте',
     'Sending…' => 'Отправка…',
-    'Map Info: :title' => 'Map Info: :title'
+    'Map Info: :title' => 'Map Info: :title',
+    'Email sent successfully!' => 'Письмо успешно отправлено!'
 
 ];

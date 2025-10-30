@@ -44,7 +44,8 @@ return [
     'Back' => 'Ortga',
     'Uzbekistan Map – Interactive map'=>'Uzbekistan Map – Interactive map',
     'Sending…' => 'Yuborilmoqda…',
-    'Map Info: :title' => 'Map Info: :title'
+    'Map Info: :title' => 'Map Info: :title',
+    'Email sent successfully!' => 'Elektron pochtaga muvaffaqiyatli yuborildi!'
   
 
 

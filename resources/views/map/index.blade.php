@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('messages.Uzbekistan Map – Interactive map') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('logo/logo2.png') }}">
 
     <!-- Preload map image -->
     <link rel="preload" href="{{ asset('map/uzbekistan-map.png') }}?v={{ time() }}" as="image">
@@ -1014,7 +1015,7 @@
                 body: JSON.stringify({ email: mail, map_id: currentMap.id, lang: currentLang })
             });
             const j = await r.json();
-            alert(j.success ? (j.message || '{{ __('messages.Sent!') }}') : '{{ __('messages.Error') }}: ' + (j.error || 'unknown'));
+            alert(j.success ? (j.message || '{{ __('messages.Send!') }}') : '{{ __('messages.Error') }}: ' + (j.error || 'unknown'));
             if (j.success) closeModal();
         } catch {
             alert('{{ __('messages.Network error!') }}');

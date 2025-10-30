@@ -45,5 +45,8 @@ return [
     'Send event details via email'=>'Send event details via email',
     'Sending…' => 'Sending…',
     'Send' => 'Send',
-    'Map Info: :title' => 'Map Info: :title'
+    'Map Info: :title' => 'Map Info: :title',
+    'Email sent successfully!' => 'Email sent successfully!'
+
+
 ];

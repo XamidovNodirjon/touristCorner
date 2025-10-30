@@ -10,6 +10,7 @@
           integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ asset('logo/logo2.png') }}">
     <link rel="stylesheet" href="{{ asset('css/library.css') }}">
     <link rel="stylesheet" href="{{ asset('css/events.css') }}">
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">

@@ -10,6 +10,7 @@
           integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ asset('logo/logo2.png') }}">
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/library.css') }}">
 
@@ -499,11 +500,11 @@
 <div class="modal" id="successModal">
     <div class="modal-content modern-modal">
         <div class="modal-header">
-            <h3>Success</h3>
-            <button class="modal-close" onclick="closeSuccessModal()">Close</button>
+            <h3>{{__('messages.Success')}}</h3>
+            <button class="modal-close" onclick="closeSuccessModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <p>Material sent successfully</p>
+            <p>{{__('messages.Material sent successfully')}}</p>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" onclick="closeSuccessModal()">OK</button>
