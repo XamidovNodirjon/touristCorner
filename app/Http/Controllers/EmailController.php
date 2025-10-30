@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Library;
+use App\Models\Map;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Models\Material;
+use Illuminate\Support\Facades\Log;
 
 class EmailController extends Controller
 {
@@ -20,10 +21,8 @@ class EmailController extends Controller
             ]);
 
             $lang = $request->input('lang', 'ru');
-
             $material = Library::findOrFail($request->material_id);
 
-            // Faqat URL ni olayapmiz (hech qanday fayl yo‘q)
             $fileUrl = match ($lang) {
                 'uz' => $material->file_path_uz,
                 'en' => $material->file_path_en,
@@ -34,7 +33,6 @@ class EmailController extends Controller
                 return response()->json(['error' => 'Tanlangan tildagi URL topilmadi'], 404);
             }
 
-            // Tilga qarab matn
             $title = match ($lang) {
                 'uz' => $material->title_uz,
                 'en' => $material->title_en,
@@ -47,14 +45,12 @@ class EmailController extends Controller
                 default => $material->description_ru,
             };
 
-            // Email matnini tayyorlaymiz
             $body = match ($lang) {
                 'uz' => "Assalomu alaykum!\n\nSiz so‘ragan material: {$title}\n\n{$description}\n\nUshbu havola orqali ko‘rishingiz mumkin:\n{$fileUrl}",
                 'en' => "Hello!\n\nYou requested the material: {$title}\n\n{$description}\n\nYou can view/download it here:\n{$fileUrl}",
                 'ru' => "Здравствуйте!\n\nВы запросили материал: {$title}\n\n{$description}\n\nПосмотреть/скачать можно по ссылке:\n{$fileUrl}",
             };
 
-            // Email yuborish
             Mail::raw($body, function ($message) use ($request, $title) {
                 $message->to($request->email)
                     ->subject("Material: {$title}");
@@ -68,12 +64,6 @@ class EmailController extends Controller
         }
     }
 
-
-
-
-
-
-    
     public function sendEvent(Request $request)
     {
         $data = $request->validate([
@@ -82,21 +72,17 @@ class EmailController extends Controller
         ]);
 
         $event = $data['event'];
-
-        // Fayl yo‘lini topish
         $filePath = storage_path('app/public/' . $event['image']);
         $hasFile = file_exists($filePath);
 
-        // Email matni
         $messageText = "
-            🗓 Tadbir nomi: {$event['title_uz']}
-            📅 Sana: {$event['date']}
-            📍 Joylashuv: {$event['location']}
-            ℹ️ Tavsif:
+            Tadbir nomi: {$event['title_uz']}
+            Sana: {$event['date']}
+            Joylashuv: {$event['location']}
+            Tavsif:
             {$event['description_uz']}
         ";
 
-        // Email yuborish
         \Mail::raw($messageText, function ($message) use ($data, $event, $filePath, $hasFile) {
             $message->to($data['email'])
                 ->subject("Tadbir: {$event['title_uz']}");
@@ -105,78 +91,74 @@ class EmailController extends Controller
             }
         });
 
-        return response()->json(['success' => true, 'message' => 'To‘liq tadbir ma’lumoti yuborildi ✅']);
+        return response()->json(['success' => true, 'message' => 'To‘liq tadbir ma’lumoti yuborildi']);
     }
 
     public function sendMap(Request $request)
     {
-        dd($request->all());
         try {
             $request->validate([
-                'email' => 'required|email',
+                'email'  => 'required|email',
                 'map_id' => 'required|integer|exists:maps,id',
-                'lang' => 'nullable|in:uz,ru,en',
+                'lang'   => 'nullable|in:uz,en,ru',
             ]);
 
             $lang = $request->input('lang', 'uz');
-            $map = \App\Models\Map::findOrFail($request->map_id);
+            $map  = Map::findOrFail($request->map_id);
 
-            // Tilga qarab ma'lumotlarni olish
-            $title = match ($lang) {
-                'uz' => $map->name_uz,
-                'en' => $map->name_en,
-                default => $map->name_ru,
-            };
+            $title       = $map->name;
+            $description = $map->description;
 
-            $description = match ($lang) {
-                'uz' => $map->description_uz,
-                'en' => $map->description_en,
-                default => $map->description_ru,
-            };
+            $emailContent = $this->getEmailContent($lang, $title, $description);
+            $emailSubject = $this->getEmailSubject($lang, $title);
 
-            // Email matni
-            $messageText = match ($lang) {
-                'uz' => "
-                🗺️ Joy nomi: {$title}
-                📍 Joylashuv: O'zbekiston
-
-                ℹ️ Tavsif:
-                {$description}
-
-                Bu joy haqida batafsil ma'lumot uchun veb-saytimizga tashrif buyuring!
-                            ",
-                            'en' => "
-                🗺️ Location: {$title}
-                📍 Location: Uzbekistan
-
-                ℹ️ Description:
-                {$description}
-
-                Visit our website for more details about this location!
-                            ",
-                            default => "
-                🗺️ Название места: {$title}
-                📍 Местоположение: Узбекистан
-
-                ℹ️ Описание:
-                {$description}
-
-                Посетите наш веб-сайт для получения подробной информации!
-                ",
-            };
-
-            // Email yuborish
-            \Mail::raw($messageText, function ($message) use ($request, $title) {
+            Mail::raw($emailContent, function ($message) use ($request, $emailSubject) {
                 $message->to($request->email)
-                    ->subject("Joy haqida ma'lumot: {$title}");
+                        ->subject($emailSubject);
             });
 
-            return response()->json(['success' => true, 'message' => 'Ma\'lumotlar muvaffaqiyatli yuborildi!']);
+            return response()->json([
+                'success' => true,
+                'message' => __('messages.Email sent successfully!')
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => 'Validation failed',
+                'details' => $e->errors()
+            ], 422);
 
         } catch (\Throwable $e) {
-            \Log::error('Map email yuborishda xatolik: ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            \Log::error('Map email error: ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'trace'   => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'error' => 'Server error. Please try again later.'
+            ], 500);
         }
     }
 
+    private function getEmailSubject(string $lang, string $title): string
+    {
+        return match ($lang) {
+            'uz' => __("messages.Map Info: :title", ['title' => $title]),
+            'en' => __("messages.Map Info: :title", ['title' => $title]),
+            'ru' => __("messages.Map Info: :title", ['title' => $title]),
+            default => "Map Info: {$title}",
+        };
+    }
+
+    private function getEmailContent(string $lang, string $title, ?string $description): string
+    {
+        $description = $description ?: __('messages.No description available');
+
+        return match ($lang) {
+            'uz' => "Joy nomi: {$title}\n\nJoylashuv: O'zbekiston\n\nTavsif:\n{$description}\n\nBatafsil ma'lumot uchun veb-saytimizga tashrif buyuring! https://uzbekistan.travel/uz/ozbekiston-shaharlari/",
+            'en' => "Location: {$title}\n\nLocation: Uzbekistan\n\nDescription:\n{$description}\n\nVisit our website for more details! https://uzbekistan.travel/en/i/uzbekistan-cities/",
+            'ru' => "Название места: {$title}\n\nМестоположение: Узбекистан\n\nОписание:\n{$description}\n\nПосетите наш сайт для подробной информации! https://uzbekistan.travel/ru/i/goroda-uzbekistana/",
+            default => "Location: {$title}\n\nDescription:\,{$description}",
+        };
+    }
 }

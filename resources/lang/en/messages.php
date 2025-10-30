@@ -5,9 +5,8 @@ return [
     'Home' => 'Home',
     'Interactive Map' => 'Interactive Map',
     'Materials Library' => 'Materials Library',
-    'Events & Activities' => 'Events & Activities',
     'Plan Your Journey' => 'Plan Your Journey',
-    'Everything a traveler needs can be found on this website' => 'Everything a traveler needs can be found on this website',
+    'All the information a traveler needs is available here' => 'All the information a traveler needs is available here',
     'Explore Interactive Map' => 'Explore Interactive Map',
     'Discover the famous destinations in Uzbekistan for yourself' => 'Discover the famous destinations in Uzbekistan for yourself',
     'Online Library' => 'Online Library',
@@ -39,4 +38,12 @@ return [
     '📧 Your email address' => '📧 Your email address',
     '📩 Send by email' => '📩 Send by email',
     'All' => 'All',
+    'No description.' =>'No description.',
+    'Uzbekistan Travel' => 'Uzbekistan Travel',
+    'Back' => 'Back',
+    'Uzbekistan Map – Interactive map'=>'Uzbekistan Map – Interactive map',
+    'Send event details via email'=>'Send event details via email',
+    'Sending…' => 'Sending…',
+    'Send' => 'Send',
+    'Map Info: :title' => 'Map Info: :title'
 ];

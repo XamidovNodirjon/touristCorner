@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventCategory;
+use App\Models\LibraryCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,7 +14,7 @@ class EventController extends Controller
     public function index()
     {
         $events = Event::latest()->get();
-        $categories = EventCategory::all();
+        $categories = LibraryCategory::all();
         return view('admin.events.index', compact('events', 'categories'));
     }
 

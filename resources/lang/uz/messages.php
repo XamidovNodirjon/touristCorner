@@ -5,14 +5,13 @@ return [
     'Home' => 'Bosh sahifa',
     'Interactive Map' => 'Interaktiv xarita',
     'Materials Library' => 'Materiallar kutubxonasi',
-    'Events & Activities' => 'Tadbirlar va faoliyatlar',
     'Plan Your Journey' => 'Sayohatingizni rejalashtiring',
-    'Everything a traveler needs can be found on this website' => 'Sayyohga kerak bo‘lgan barcha narsa ushbu saytda mavjud',
+    'All the information a traveler needs is available here' => 'Sayyoh uchun kerakli barcha ma’lumot shu yerda mavjud',
     'Explore Interactive Map' => 'Interaktiv xaritani o‘rganing',
     'Discover the famous destinations in Uzbekistan for yourself' => 'Oʻzbekistonda mashxur manzillarni o‘zingiz uchun kashf eting',
     'Online Library' => 'Elektron kutubxona',
     'Access useful materials for your Uzbekistan journey' => 'Oʻzbekistonga sayohatingiz uchun foydali materiallardan foydalaning',
-    'Events & Festivals' => 'Tadbirlar va festivalar',
+    'Events & Festivals' => 'Tadbirlar taqvimi',
     'Explore festivals, exhibitions, and celebrations across Uzbekistan' => 'Oʻzbekiston bo‘ylab festivallar, ko‘rgazmalar va bayramlarni o‘rganing',
     'Get Started' => 'Boshlash',
     'Title' => 'Oʻzbekistonga xush kelibsiz',
@@ -25,7 +24,7 @@ return [
     'Events & Activities - Welcome to Uzbekistan' => 'Tadbirlar va faoliyatlar - Oʻzbekistonga xush kelibsiz',
     'Send Details' => 'Tafsilotlarni yuborish',
     'No events found.' => 'Hech qanday tadbir topilmadi.',
-    'Email the event name' => 'Tadbir nomini elektron pochta orqali yuborish',
+    'Send event details via email' => 'Tadbir maʻlumotlarini elektron pochta orqali yuborish',
     'Event Name:' => 'Tadbir nomi:',
     'Description:' => 'Tavsif:',
     'Email Address' => 'Elektron pochta',
@@ -40,6 +39,12 @@ return [
     '📧 Your email address' => '📧 Sizning elektron pochta manzilingiz',
     '📩 Send by email' => '📩 Elektron pochta orqali yuboring',
     'All' => 'Barchasi',
+    'No description' => "Tavsif yo'q",
+    'Uzbekistan Travel' => 'Uzbekistan Travel',
+    'Back' => 'Ortga',
+    'Uzbekistan Map – Interactive map'=>'Uzbekistan Map – Interactive map',
+    'Sending…' => 'Yuborilmoqda…',
+    'Map Info: :title' => 'Map Info: :title'
   
 
 

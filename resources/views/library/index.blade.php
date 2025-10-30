@@ -159,6 +159,7 @@
             align-items: center;
             font-weight: 600;
             flex-shrink: 0;
+            color: black;
         }
 
         .modal-header h3 {
@@ -319,7 +320,7 @@
             background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
             color: #fff;
             border: none;
-            border-radius: 8px;
+            /* border-radius: 8px; */
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
@@ -333,9 +334,9 @@
         }
 
         .virtual-keyboard button.special {
-            background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
-            font-weight: bold;
-            color: #4CAF50;
+            /* background: linear-gradient(145deg, #3a3a3a, #2a2a2a); */
+            /* font-weight: bold; */
+            /* color: #4CAF50; */
         }
 
         .virtual-keyboard button.wide { flex: 2; }
@@ -366,7 +367,7 @@
             <a href="{{ route('welcome') }}" class="nav-link"><i class="fas fa-home"></i>{{ __('messages.Home') }}</a>
             <a href="{{ route('map-road') }}" class="nav-link"><i class="fas fa-map-location-dot"></i>{{ __('messages.Interactive Map') }}</a>
             <a href="{{ route('libraries.index') }}" class="nav-link active"><i class="fas fa-book-open"></i>{{ __('messages.Materials Library') }}</a>
-            <a href="{{ route('events.index') }}" class="nav-link"><i class="fas fa-calendar-alt"></i>{{ __('messages.Events & Activities') }}</a>
+            <a href="{{ route('events.index') }}" class="nav-link"><i class="fas fa-calendar-alt"></i>{{ __('messages.Events & Festivals') }}</a>
         </nav>
 
         @php
@@ -384,7 +385,9 @@
             <ul class="lang-dropdown" id="lang-dropdown">
                 <li data-lang="uz" data-flag="{{ $flags['uz'] }}"><img src="{{ $flags['uz'] }}" alt="Uzbek Flag" class="flag"> O'zbekcha</li>
                 <li data-lang="en" data-flag="{{ $flags['en'] }}"><img src="{{ $flags['en'] }}" alt="UK Flag" class="flag"> English</li>
-                <li data-lang="ru" data-flag="{{ $flags['ru'] }}" alt="Russia Flag" class="flag"> Русский</li>
+                <li data-lang="ru" data-flag="{{ $flags['ru'] }}">
+                    <img src="{{ $flags['ru'] }}" alt="Russia Flag" class="flag"> Русский
+                </li>
             </ul>
         </div>
     </div>
@@ -441,7 +444,7 @@
                         <div class="card-actions">
                             <button class="btn btn-primary"
                                     onclick="openEmailModal({{ $material->id }}, '{{ addslashes($material->$titleField) }}', '{{ addslashes($material->$descField) }}')">
-                                Send to email
+                                {{ __('messages.Send to email') }}
                             </button>
                         </div>
                     </div>
@@ -452,15 +455,15 @@
 </main>
 
 <button onclick="scrollToTop()" id="scrollToTopBtn" title="Yuqoriga" class="scroll-to-top-btn">
-    Up
+    <i class="fas fa-chevron-up"></i>
 </button>
 
 <!-- Email Modal -->
 <div class="modal" id="emailModal">
     <div class="modal-content modern-modal">
         <div class="modal-header">
-            <h3>Send by email</h3>
-            <button class="modal-close" onclick="closeModal()">X</button>
+            <p><strong>{{ __('messages.📩 Send by email') }}</strong></p>
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
         </div>
 
         <div class="modal-body">
@@ -472,18 +475,18 @@
             </div>
 
             <div class="form-group">
-                <label for="emailInput">Your email address</label>
-                <input type="email" id="emailInput" class="form-input" placeholder="sizning.email@example.com" required>
+                <label for="emailInput">{{__('messages.📧 Your email address')}}</label>
+                <input type="email" id="emailInput" class="form-input" placeholder=".email@example.com" required>
                 <small class="note">
-                    * We will also send you the latest news and useful materials to your email address.
+                    {{ __('messages.* We will also send you the latest news and useful materials to your email address.') }}
                 </small>
             </div>
         </div>
 
         <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-secondary" onclick="closeModal()">{{ __('messages.Cancel') }}</button>
             <button class="btn btn-primary" onclick="sendEmail()">
-                Send to email
+                {{ __('messages.Send to email') }}
             </button>
         </div>
     </div>
@@ -523,11 +526,10 @@
     // === Virtual Keyboard ===
     let isUpperCase = false;
     const keyboardLayout = [
-        ['1','2','3','4','5','6','7','8','9','0','-','_','Backspace'],
+        ['1','2','3','4','5','6','7','8','9','0','-','_','←'],
         ['q','w','e','r','t','y','u','i','o','p','@'],
         ['a','s','d','f','g','h','j','k','l','.','!','?'],
-        ['CAPS','z','x','c','v','b','n','m',',',';','CAPS'],
-        // ['Close','Enter','Close']  // Space o'rniga Close
+        ['CAPS','z','x','c','v','b','n','m',':',';','CAPS'],
     ];
 
     function showKeyboard() {
@@ -556,7 +558,7 @@
                 if (isUpperCase && key.length === 1 && !['@','!','?','.'].includes(key)) {
                     displayKey = key.toUpperCase();
                 }
-                if (key === 'Backspace') displayKey = 'Backspace';
+                if (key === '←') displayKey = '←';
                 if (key === 'CAPS') displayKey = 'CAPS';
                 if (key === 'Enter') displayKey = 'Enter';
                 if (key === 'Close') displayKey = 'Close';
@@ -564,11 +566,11 @@
                 btn.textContent = displayKey;
                 btn.onclick = () => handleKeyPress(key);
 
-                if (['CAPS', 'Enter', 'Close', 'Backspace'].includes(key)) {
+                if (['CAPS', 'Enter', 'Close', '←'].includes(key)) {
                     btn.className = 'special';
                     if (key === 'Close') btn.className += ' extra-wide';
                     if (key === 'Enter') btn.className += ' wide';
-                    if (key === 'Backspace') btn.className += ' wide';
+                    if (key === '←') btn.className += ' wide';
                 }
 
                 rowDiv.appendChild(btn);
@@ -581,7 +583,7 @@
     function handleKeyPress(key) {
         const input = document.getElementById('emailInput');
         switch (key) {
-            case 'Backspace':
+            case '←':
                 input.value = input.value.slice(0, -1);
                 break;
             case 'Enter':
@@ -600,6 +602,27 @@
         }
         input.focus();
     }
+
+    let inactivityTime = 0;
+
+    // Harakat kuzatuvchi eventlar
+    document.addEventListener('mousemove', resetTimer);
+    document.addEventListener('click', resetTimer);
+    document.addEventListener('scroll', resetTimer);
+    document.addEventListener('keydown', resetTimer);
+
+    function resetTimer() {
+        inactivityTime = 0;
+    }
+
+    setInterval(() => {
+        inactivityTime++;
+
+        if (inactivityTime === 60) {
+            window.location.href = "{{ route('welcome') }}";
+        }
+
+    }, 1000);
 
     // === Modal ===
     let selectedMaterialId = null;

@@ -5,16 +5,15 @@ return [
     'Home' => 'Главная',
     'Interactive Map' => 'Интерактивная карта',
     'Materials Library' => 'Библиотека материалов',
-    'Events & Activities' => 'События и мероприятия',
     'Plan Your Journey' => 'Спланируйте своё путешествие',
-    'Everything a traveler needs can be found on this website' => 'Всё, что нужно путешественнику, — на этом сайте',
+    'All the information a traveler needs is available here' => 'Вся необходимая информация для туриста доступна здесь',
     'Explore Interactive Map' => 'Изучите интерактивную карту',
     'Discover the famous destinations in Uzbekistan for yourself' => 'Откройте для себя популярные места Узбекистана',
     'Online Library' => 'Онлайн-библиотека',
     'Access useful materials for your Uzbekistan journey' => 'Доступ к полезным материалам для вашего путешествия',
-    'Events & Festivals' => 'События и фестивали',
+    'Events & Festivals' => 'Афиша мероприятий',
     'Explore festivals, exhibitions, and celebrations across Uzbekistan' => 'Изучите фестивали, выставки и праздники по всему Узбекистану',
-    'Get Started' => 'Открывать ',
+    'Get Started' => 'Перейти',
     'View a collection of guides, books and resources about Uzbekistan' => 'Просмотрите коллекцию руководств, книг и ресурсов об Узбекистане',
     'No material found' => 'Материалы не найдены',
     'There are no materials in the library yet.' => 'В библиотеке пока нет материалов.',
@@ -37,6 +36,12 @@ return [
     '📧 Your email address' => '📧 Ваш адрес электронной почты',
     '📩 Send by email' => '📩 Отправить по электронной почте',
     'All' => 'Все',
-
+    'No description.' =>'Описания нет.',
+    'Uzbekistan Travel' => 'Uzbekistan Travel',
+    'Back' => 'Назад',
+    'Uzbekistan Map – Interactive map'=>'Uzbekistan Map – Interactive map',
+    'Send event details via email' =>'Отправить подробности мероприятия по электронной почте',
+    'Sending…' => 'Отправка…',
+    'Map Info: :title' => 'Map Info: :title'
 
 ];

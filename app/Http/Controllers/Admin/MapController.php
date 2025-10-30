@@ -10,8 +10,6 @@ use Illuminate\Http\Request;
 class MapController extends Controller
 {
 
-    
-
     public function index()
     {
         $maps = \App\Models\Map::select([
@@ -20,7 +18,8 @@ class MapController extends Controller
             'description_uz','description_ru','description_en',
             'image'               // faqat fayl yo‘li
         ])->get();
-        return view('admin.maps.index', compact('maps'));
+        $lang = session('locale', 'en'); // joriy til
+        return view('admin.maps.index', compact('maps','lang'));
     }
 
     public function create()

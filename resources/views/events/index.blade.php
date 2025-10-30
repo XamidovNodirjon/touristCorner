@@ -226,7 +226,7 @@
             <a href="{{ route('welcome') }}" class="nav-link"><i class="fas fa-home"></i>{{ __('messages.Home') }}</a>
             <a href="{{ route('map-road') }}" class="nav-link"><i class="fas fa-map-location-dot"></i>{{ __('messages.Interactive Map') }}</a>
             <a href="{{ route('libraries.index') }}" class="nav-link"><i class="fas fa-book-open"></i>{{ __('messages.Materials Library') }}</a>
-            <a href="{{ route('events.index') }}" class="nav-link active"><i class="fas fa-calendar-alt"></i>{{ __('messages.Events & Activities') }}</a>
+            <a href="{{ route('events.index') }}" class="nav-link active"><i class="fas fa-calendar-alt"></i>{{ __('messages.Events & Festivals') }}</a>
         </nav>
 
         @php
@@ -268,17 +268,18 @@
 <main>
     <div class="container">
         <div class="category-bar mb-3">
-        <button class="category-button {{ request()->is('events') ? 'active' : '' }}"
-                onclick="window.location='{{ route('events.index') }}'">
-            {{ __('messages.All') }}
-        </button>
-
-        @foreach($categories as $category)
-            <button class="category-button {{ request()->is('events/category/'.$category->id) ? 'active' : '' }}"
-                    onclick="window.location='{{ route('events.filter', $category->id) }}'">
-                {{ $category->name }}
+            <button class="category-button {{ request()->is('events') ? 'active' : '' }}"
+                    onclick="window.location='{{ route('events.index') }}'">
+                {{ __('messages.All') }}
             </button>
-        @endforeach
+
+            @foreach($categories as $category)
+                <button class="category-button {{ request()->is('events/category/'.$category->id) ? 'active' : '' }}"
+                        onclick="window.location='{{ route('events.filter', $category->id) }}'">
+                    {{ $category->name }}
+                </button>
+            @endforeach
+        </div>
     </div>
 
     @if($events->isNotEmpty())
@@ -290,7 +291,6 @@
                              alt="{{ $event->title_uz }}"
                              class="card-image"
                              onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80'">
-                        
                         <div class="card-content">
                             <div class="tag-container">
                                 <span class="tag {{ $event->category->slug ?? 'default' }}">{{ $event->category->name ?? 'Tadbir' }}</span>
@@ -325,7 +325,6 @@
                                     <span>{{ $event->location }}</span>
                                 </div>
                             </div>
-                            
                             <button class="card-button"
                                 onclick="openEmailModal(
                                             '{{ $event->id }}',
@@ -354,7 +353,7 @@
 <div class="modal" id="emailModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>{{ __('messages.Email the event name') }}</h3>
+            <p><strong>{{ __('messages.Send event details via email') }}</strong></p>
             <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
@@ -477,14 +476,29 @@
 
         input.focus();
     }
-    
-    // Virtual Keyboard uchun bodyga touch event qo'shish, agar kerak bo'lsa (Mobil uchun)
-    // window.addEventListener('DOMContentLoaded', () => {
-    //     const input = document.getElementById('emailInput');
-    //     input.focus();
-    // });
 </script>
 <script>
+    let inactivityTime = 0;
+
+    // Harakat kuzatuvchi eventlar
+    document.addEventListener('mousemove', resetTimer);
+    document.addEventListener('click', resetTimer);
+    document.addEventListener('scroll', resetTimer);
+    document.addEventListener('keydown', resetTimer);
+
+    function resetTimer() {
+        inactivityTime = 0;
+    }
+
+    setInterval(() => {
+        inactivityTime++;
+
+        if (inactivityTime === 60) {
+            window.location.href = "{{ route('welcome') }}";
+        }
+
+    }, 1000);
+    
     document.addEventListener('DOMContentLoaded', function() {
         const langSelectBtn = document.getElementById('lang-select-btn');
         const langDropdown = document.getElementById('lang-dropdown');

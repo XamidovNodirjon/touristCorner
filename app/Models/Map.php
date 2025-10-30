@@ -8,15 +8,9 @@ class Map extends Model
 {
     protected $table = 'maps';
     protected $fillable = [
-        'name_uz',
-        'name_en',
-        'name_ru',
-        'description_uz',
-        'description_en',
-        'description_ru',
-        'latitude',
-        'longitude',
-        'image'
+        'name_uz', 'name_en', 'name_ru',
+        'description_uz', 'description_en', 'description_ru',
+        'latitude', 'longitude', 'image'
     ];
 
     protected $appends = ['image_url'];
@@ -26,13 +20,12 @@ class Map extends Model
         return $this->image ? asset('storage/' . $this->image) : null;
     }
 
-    public function getTitleAttribute()
+    public function getNameAttribute()
     {
-        $lang = session('locale', 'en'); // default en
-        return $this->{'title_' . $lang} ?? $this->title_en;
+        $lang = session('locale', 'en');
+        return $this->{'name_' . $lang} ?? $this->name_en;
     }
 
-    // 🔥 Dynamic description accessor
     public function getDescriptionAttribute()
     {
         $lang = session('locale', 'en');

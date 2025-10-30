@@ -28,6 +28,50 @@
             height: auto;
             display: block;
         }
+        #ad-popup {
+            position: fixed;
+            top: 110px; /* Biroz pastga tushirdik */
+            right: -200px;
+            width: 170px;
+            height: auto;
+            z-index: 9999;
+            opacity: 0;
+            transition: right 0.6s ease, opacity 0.6s ease;
+        }
+
+        #ad-popup.show {
+            right: 20px;
+            opacity: 1;
+            animation: ad-bounce 2s infinite ease-in-out;
+        }
+
+        #ad-popup img {
+            width: 100%;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* Animatsiya: tepa-past + kattalashish */
+        @keyframes ad-bounce {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-8px) scale(1.07);
+            }
+        }
+
+        .header-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 10000;
+        }
+        main {
+            margin-top: 90px; /* Header balandligiga moslab */
+        }
+
+
     </style>
 </head>
 <body>
@@ -47,7 +91,7 @@
             <a href="{{ route('welcome') }}" class="nav-link active"><i class="fas fa-home"></i>{{ __('messages.Home') }}</a>
             <a href="{{ route('map-road') }}" class="nav-link"><i class="fas fa-map-location-dot"></i>{{ __('messages.Interactive Map') }}</a>
             <a href="{{ route('libraries.index') }}" class="nav-link"><i class="fas fa-book-open"></i>{{ __('messages.Materials Library') }}</a>
-            <a href="{{ route('events.index') }}" class="nav-link"><i class="fas fa-calendar-alt"></i>{{ __('messages.Events & Activities') }}</a>
+            <a href="{{ route('events.index') }}" class="nav-link"><i class="fas fa-calendar-alt"></i>{{ __('messages.Events & Festivals') }}</a>
         </nav>
 
         @php
@@ -82,7 +126,6 @@
                 </li>
             </ul>
         </div>
-
     </div>
 </header>
 
@@ -90,9 +133,9 @@
     <section class="journey-section">
         <div class="section-header">
             <h2>{{ __('messages.Plan Your Journey') }}</h2>
-            <p>{{ __('messages.Everything a traveler needs can be found on this website') }}</p>
+            <p>{{ __('messages.All the information a traveler needs is available here') }}</p>
         </div>
-        <div class="cards-container">
+        <div class="cards-container" >
             <div class="card">
                 <a href="{{ route('map-road') }}" style="text-decoration: none; color: inherit;">
                     <div class="card-image-container">
@@ -100,7 +143,7 @@
                               alt="Uzbekistan map" class="card-image" loading="lazy">
                     </div>
                     <div class="card-content">
-                        <h3>{{ __('messages.Explore Interactive Map') }}</h3>
+                        <h3>{{ __('messages.Interactive Map') }}</h3>
                         <p>{{ __('messages.Discover the famous destinations in Uzbekistan for yourself') }}</p>
                         <span class="card-link">{{ __('messages.Get Started') }}→</span>
                     </div>
@@ -114,7 +157,7 @@
                               alt="Uzbekistan map" class="card-image" loading="lazy">
                     </div>
                     <div class="card-content">
-                        <h3>{{ __('messages.Online Library') }}</h3>
+                        <h3>{{ __('messages.Materials Library') }}</h3>
                         <p>{{ __('messages.Access useful materials for your Uzbekistan journey') }}</p>
                         <span class="card-link">{{ __('messages.Get Started') }}→</span>
                     </div>
@@ -137,6 +180,37 @@
         </div>
     </section>
 </main>
+<div id="ad-popup">
+    <img src="{{ asset('advertisement/titf_uz.png') }}" alt="Advertisement">
+</div>
+
+<script>
+    let inactivityTime = 0;
+
+    // Harakat kuzatuvchi eventlar
+    document.addEventListener('mousemove', resetTimer);
+    document.addEventListener('click', resetTimer);
+    document.addEventListener('scroll', resetTimer);
+    document.addEventListener('keydown', resetTimer);
+
+    function resetTimer() {
+        inactivityTime = 0;
+    }
+
+    setInterval(() => {
+        inactivityTime++;
+        // 60 sekund bo‘lsa reklamani chiqaramiz
+        if (inactivityTime === 15) {
+            document.getElementById('ad-popup').classList.add('show');
+        }
+    }, 1000);
+
+    document.getElementById('ad-popup').addEventListener('click', function () {
+        window.location.href = "{{ route('events.index') }}";
+    });
+
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const langSelectBtn = document.getElementById('lang-select-btn');

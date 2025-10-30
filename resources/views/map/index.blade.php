@@ -1,30 +1,28 @@
 {{-- resources/views/maps/index.blade.php --}}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ $locale ?? 'uz' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Uzbekistan Map – Interactive Kiosk</title>
+    <title>{{ __('messages.Uzbekistan Map – Interactive map') }}</title>
+
+    <!-- Preload map image -->
+    <link rel="preload" href="{{ asset('map/uzbekistan-map.png') }}?v={{ time() }}" as="image">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         :root {
             --c-dark: #1C3F3A;
             --c-white: #FFFFFF;
             --c-light: #E0E9E9;
-            --c-beige: #EBE9DA;
             --radius: 20px;
             --shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -34,7 +32,7 @@
             overflow: hidden;
         }
 
-        /* LOADING */
+        /* LOADING — YANGI: HARFMA-HARF + SPINNER */
         #loading {
             position: fixed;
             inset: 0;
@@ -55,16 +53,18 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: pulseGlow 2.5s ease-in-out infinite alternate;
+            opacity: 1;
+            min-height: 80px;
+            text-align: center;
         }
 
-        @keyframes pulseGlow {
-            0% { text-shadow: 0 0 20px rgba(255,255,255,0.4); }
-            100% { text-shadow: 0 0 40px rgba(255,255,255,0.8); }
+        #animated-title {
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .loading-spinner {
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             width: 80px;
             height: 80px;
             border: 6px solid rgba(255,255,255,0.2);
@@ -73,9 +73,7 @@
             animation: spin 1.2s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* MAP CONTAINER */
         .map-container {
@@ -95,9 +93,7 @@
             justify-content: center;
         }
 
-        #map-wrapper:active {
-            cursor: grabbing;
-        }
+        #map-wrapper:active { cursor: grabbing; }
 
         #map-inner {
             position: relative;
@@ -137,13 +133,8 @@
             transition: transform 0.2s ease;
         }
 
-        .marker:hover {
-            transform: translate(-50%, -50%) scale(1.4);
-        }
-
-        .marker.active {
-            animation: activePulse 1.8s infinite;
-        }
+        .marker:hover { transform: translate(-50%, -50%) scale(1.4); }
+        .marker.active { animation: activePulse 1.8s infinite; }
 
         @keyframes pulse {
             0% { box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 0 0 rgba(255,255,255,0.7); }
@@ -157,7 +148,7 @@
             100% { box-shadow: 0 8px 35px rgba(0,0,0,0.9), 0 0 0 0 rgba(255,255,255,0); }
         }
 
-        /* INFO PANEL - YASHIRIN */
+        /* INFO PANEL */
         .marker-info {
             position: fixed;
             top: 0;
@@ -206,10 +197,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .marker-info p {
-            color: #444;
-            line-height: 1.7;
-        }
+        .marker-info p { color: #444; line-height: 1.7; }
 
         .close-info {
             position: absolute;
@@ -230,9 +218,7 @@
             transition: transform 0.3s ease;
         }
 
-        .close-info:hover {
-            transform: rotate(90deg) scale(1.1);
-        }
+        .close-info:hover { transform: rotate(90deg) scale(1.1); }
 
         .send-email-btn {
             width: 100%;
@@ -249,9 +235,7 @@
             transition: transform 0.2s ease;
         }
 
-        .send-email-btn:hover {
-            transform: translateY(-2px);
-        }
+        .send-email-btn:hover { transform: translateY(-2px); }
 
         /* CONTROLS */
         .controls {
@@ -307,20 +291,14 @@
             transition: transform 0.2s ease;
         }
 
-        .back-button:hover {
-            transform: translateX(-5px);
-        }
+        .back-button:hover { transform: translateX(-5px); }
+        .back-button::before { content: "{{ __('messages.Back') }}"; font-size: 1.2rem; }
 
-        .back-button::before {
-            content: "Back";
-            font-size: 1.2rem;
-        }
-
-        /* EMAIL MODAL - YANGI DIZAYN */
+        /* EMAIL MODAL */
         .email-modal {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.85);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -328,8 +306,9 @@
             visibility: hidden;
             pointer-events: none;
             z-index: 100;
-            backdrop-filter: blur(8px);
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             padding: 20px;
         }
 
@@ -340,141 +319,170 @@
         }
 
         .modal-content {
-            background: #fff;
-            padding: 30px;
-            border-radius: var(--radius);
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 24px;
             width: 90%;
-            max-width: 460px;
-            max-height: calc(90vh - 100px);
+            max-width: 480px;
+            max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow);
-            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 60px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+            animation: modalPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.1);
             position: relative;
+            border: 1px solid rgba(28, 63, 58, 0.1);
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: scale(0.85) translateY(-30px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        @keyframes modalPop {
+            0% { opacity: 0; transform: scale(0.8) translateY(-40px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
         }
 
         .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--c-dark), #555);
+            font-size: 1.55rem;
+            font-weight: 500;
+            background: linear-gradient(135deg, var(--c-dark), #2c5a57);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin: 0;
         }
 
         .modal-close-btn {
-            background: none;
+            background: #f1f3f5;
             border: none;
-            font-size: 1.8rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            color: #6c757d;
             cursor: pointer;
-            color: #666;
-            width: 36px;
-            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
 
         .modal-close-btn:hover {
-            background: #f0f0f0;
+            background: #e9ecef;
             color: #333;
+            transform: scale(1.1);
         }
 
         .modal-info-box {
-            background: #f8f9fa;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9f5f2);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border-left: 5px solid var(--c-dark);
+            box-shadow: 0 4px 15px rgba(28, 63, 58, 0.08);
+            max-height: 180px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #a0c4c0 #f1f3f5;
         }
 
-        .modal-info-box h3 {
-            margin: 0 0 8px 0;
-            color: #1C3F3A;
-            font-size: 1.3rem;
-        }
+        .modal-info-box::-webkit-scrollbar { width: 6px; }
+        .modal-info-box::-webkit-scrollbar-track { background: #f1f3f5; border-radius: 10px; }
+        .modal-info-box::-webkit-scrollbar-thumb { background: #a0c4c0; border-radius: 10px; }
+        .modal-info-box::-webkit-scrollbar-thumb:hover { background: #8ab0ac; }
 
-        .modal-info-box p {
-            margin: 0;
-            color: #444;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
+        .info-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 8px;
-            font-weight: 600;
+        }
+
+        .info-title-wrap i { color: var(--c-dark); font-size: 1.3rem; }
+        .info-title { margin: 0; font-size: 1.35rem; font-weight: 700; color: #1a3a36; }
+        .info-desc { margin: 0; color: #555; font-size: 1rem; line-height: 1.6; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: 700;
             color: #1C3F3A;
+            font-size: 1.05rem;
         }
 
         .form-input {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid rgba(28,63,58,0.2);
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: border 0.3s ease;
+            padding: 16px 18px;
+            border: 2px solid #d1d9e0;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--c-dark);
-            box-shadow: 0 0 0 3px rgba(28,63,58,0.1);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(28, 63, 58, 0.15);
+            transform: translateY(-1px);
         }
 
-        /* STICKY FOOTER */
+        .input-hint {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.875rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
         .modal-footer {
-            position: sticky;
-            bottom: 0;
-            background: white;
-            padding: 16px 0 0;
-            margin: 20px -30px -30px;
-            border-top: 1px solid #eee;
-            z-index: 10;
+            margin: 24px -32px -32px;
+            padding: 20px 32px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
         }
 
         .modal-buttons {
             display: flex;
-            gap: 12px;
+            gap: 14px;
             justify-content: flex-end;
+            flex-wrap: nowrap;
         }
 
         .btn {
-            padding: 12px 24px;
+            padding: 13px 26px;
             border: none;
-            border-radius: 12px;
-            font-weight: 600;
+            border-radius: 14px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1rem;
+            font-size: 1.02rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 110px;
+            justify-content: center;
         }
 
         .btn-primary {
-            background: var(--c-dark);
+            background: linear-gradient(135deg, var(--c-dark), #2c5a57);
             color: #fff;
+            box-shadow: 0 6px 20px rgba(28, 63, 58, 0.3);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(28,63,58,0.3);
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(28, 63, 58, 0.4);
         }
 
         .btn-primary:disabled {
@@ -484,93 +492,98 @@
         }
 
         .btn-secondary {
-            background: #f8f9fa;
-            color: #6c757d;
+            background: #e9ecef;
+            color: #495057;
+            border: 1px solid #ced4da;
         }
 
         .btn-secondary:hover {
-            background: #e9ecef;
+            background: #dee2e6;
+            transform: translateY(-1px);
         }
 
-        /* VIRTUAL KEYBOARD - YANGI DIZAYN */
+        @media (max-width: 480px) {
+            .modal-content { padding: 24px; border-radius: 20px; }
+            .modal-buttons { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+
+        /* VIRTUAL KEYBOARD */
         #virtual-keyboard {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            /* background: rgba(0, 0, 0, 0.95); */
-            display: none;
+            background: #2c2c2c;
+            padding: 10px 8px;
+            box-shadow: 0 -6px 25px rgba(0,0,0,0.3);
             z-index: 110;
-            max-height: 30vh;
-            overflow-y: auto;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            /* box-shadow: 0 -10px 30px rgba(0,0,0,0.3); */
+            display: none;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .keyboard-row {
             display: flex;
             justify-content: center;
-            margin-bottom: 4px;
-            gap: 4px;
+            gap: 6px;
+            margin-bottom: 8px;
         }
 
         .keyboard-key {
-            margin: 0;
-            padding: 10px 12px;
-            min-width: 44px;
-            font-size: 16px;
+            min-width: 45px;
+            height: 50px;
+            background: #3a3a3a;
+            color: #f0f0f0;
             border: none;
             border-radius: 10px;
-            background: #444;
-            color: #fff;
+            font-size: 1rem;
+            font-weight: 400;
             cursor: pointer;
             transition: all 0.2s ease;
-            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+            text-transform:lowercase;
         }
 
         .keyboard-key:hover {
-            background: #666;
-            transform: translateY(-1px);
+            background: #4a4a4a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.35);
         }
 
-        .keyboard-key.special {
-            background: #555;
+        .keyboard-key:active {
+            transform: translateY(0);
+        }
+
+        .keyboard-key[data-key="Enter"] {
+            background: #43a047;
+            color: white;
             min-width: 70px;
-            font-size: 14px;
         }
 
-        .keyboard-key.special:hover {
-            background: #777;
-        }
-
-        /* RESPONSIVE */
-        @media (min-width: 1900px) and (max-height: 1100px) {
-            .title-wrap { font-size: 5.5rem; }
-            .control-btn { width: 80px; height: 80px; font-size: 2.4rem; }
-            .marker { width: 20px; height: 20px; }
-            .marker-info { width: 520px; padding: 40px; }
-            .image-carousel { height: 380px; }
-            .send-email-btn { font-size: 1.4rem; padding: 18px; }
-            .modal-content { max-width: 560px; padding: 40px; }
-            .form-input { font-size: 1.3rem; padding: 18px; }
-            .keyboard-key { padding: 16px 20px; font-size: 22px; min-width: 56px; }
+        .keyboard-key[data-key="CAPS"].caps-active {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-color: #bee5eb;
         }
 
         @media (max-width: 768px) {
-            .marker-info { width: 100%; right: -100%; }
-            .modal-content { max-height: 75vh; }
-            .controls { right: 15px; top: 15px; }
-            .control-btn { width: 50px; height: 50px; font-size: 1.5rem; }
-            .keyboard-key { padding: 8px 10px; font-size: 14px; min-width: 40px; }
+            .keyboard-key {
+                min-width: 38px;
+                height: 44px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- LOADING -->
+    <!-- LOADING — HARFMA-HARF + SPINNER -->
     <div id="loading">
-        <div class="title-wrap">Uzbekistan Travel</div>
+        <div class="title-wrap" id="animated-title"></div>
         <div class="loading-spinner"></div>
     </div>
 
@@ -581,13 +594,19 @@
             <a href="{{ route('welcome') }}" class="back-button"></a>
 
             <div class="controls">
-                <button class="control-btn" id="zoom-in" title="Zoom In">+</button>
-                <button class="control-btn" id="zoom-out" title="Zoom Out">-</button>
-                <button class="control-btn" id="reset-view" title="Reset"><i class="fas fa-sync-alt"></i></button>
+                <button class="control-btn" id="zoom-in" title="{{ __('messages.Zoom In') }}">+</button>
+                <button class="control-btn" id="zoom-out" title="{{ __('messages.Zoom Out') }}">-</button>
+                <button class="control-btn" id="reset-view" title="{{ __('messages.Reset') }}"><i class="fas fa-sync-alt"></i></button>
             </div>
 
             <div id="map-inner">
-                <img id="map-image" src="{{ asset('map/uzbekistan-map.png') }}" alt="Uzbekistan Map">
+                <img
+                    id="map-image" 
+                    src="{{ asset('map/uzbekistan-map.png') }}?v={{ time() }}" 
+                    alt="Uzbekistan Map"
+                    loading="eager"
+                    crossorigin="anonymous"
+                >
                 <div id="marker-container"></div>
             </div>
 
@@ -598,37 +617,52 @@
                 <h3 id="info-title"></h3>
                 <p id="info-description"></p>
                 <button class="send-email-btn" id="send-email-btn">
-                    <i class="fas fa-envelope"></i> Send to Email
+                    <i class="fas fa-envelope"></i> {{ __('messages.Send to email') }}
                 </button>
             </div>
-
         </div>
     </div>
 
-    <!-- EMAIL MODAL - YANGI FOOTER -->
+    <!-- EMAIL MODAL -->
     <div class="email-modal" id="email-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Send to Email</h2>
-                <button class="modal-close-btn" id="modal-close">×</button>
+                <h2 class="modal-title">{{ __('messages.Send to email') }}</h2>
+                <button class="modal-close-btn" id="modal-close" aria-label="{{ __('messages.Close') }}">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
             <div class="modal-info-box">
-                <h3 id="modal-info-title"></h3>
-                <p id="modal-info-description"></p>
+                <div class="info-title-wrap">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3 id="modal-info-title" class="info-title"></h3>
+                </div>
+                <p id="modal-info-description" class="info-desc"></p>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Your Email Address</label>
-                <input type="email" id="email-input" class="form-input" placeholder="example@gmail.com" autocomplete="off">
+                <label class="form-label">
+                    {{ __('messages.📧 Your email address') }}
+                </label>
+                <input 
+                    type="email" 
+                    id="email-input" 
+                    class="form-input" 
+                    placeholder="example@gmail.com" 
+                    autocomplete="off"
+                    aria-label="{{ __('messages.Enter your email') }}"
+                >
+                <small class="input-hint">{{ __('messages.* We will also send you the latest news and useful materials to your email address.') }}</small>
             </div>
 
-            <!-- STICKY FOOTER -->
             <div class="modal-footer">
                 <div class="modal-buttons">
-                    <button class="btn btn-secondary" id="cancel-btn">Cancel</button>
+                    <button class="btn btn-secondary" id="cancel-btn">
+                        <i class="fas fa-ban"></i> {{ __('messages.Cancel') }}
+                    </button>
                     <button class="btn btn-primary" id="send-btn">
-                        <i class="fas fa-paper-plane"></i> Send
+                        <i class="fas fa-paper-plane"></i> <span>{{ __('messages.Send to email') }}</span>
                     </button>
                 </div>
             </div>
@@ -638,372 +672,521 @@
     <!-- VIRTUAL KEYBOARD -->
     <div id="virtual-keyboard"></div>
 
-    <script>
-        // ===================================
-        // 1. GLOBAL VARIABLES
-        // ===================================
-        const maps = @json($maps);
-        let currentMap = null;
+<script>
+    // Inactivity redirect
+    let inactivityTime = 0;
+    ['mousemove', 'click', 'scroll', 'keydown'].forEach(ev => 
+        document.addEventListener(ev, () => inactivityTime = 0)
+    );
+    setInterval(() => {
+        if (++inactivityTime === 60) {
+            window.location.href = "{{ route('welcome') }}";
+        }
+    }, 1000);
 
-        const elements = {
-            wrapper: document.getElementById('map-wrapper'),
-            mapInner: document.getElementById('map-inner'),
-            mapImage: document.getElementById('map-image'),
-            markerContainer: document.getElementById('marker-container'),
-            markerInfo: document.getElementById('marker-info'),
-            imageCarousel: document.getElementById('image-carousel'),
-            infoTitle: document.getElementById('info-title'),
-            infoDesc: document.getElementById('info-description'),
-            closeInfo: document.getElementById('close-info'),
-            sendEmailBtn: document.getElementById('send-email-btn'),
-            zoomInBtn: document.getElementById('zoom-in'),
-            zoomOutBtn: document.getElementById('zoom-out'),
-            resetBtn: document.getElementById('reset-view'),
-            loading: document.getElementById('loading'),
-            emailModal: document.getElementById('email-modal'),
-            modalClose: document.getElementById('modal-close'),
-            cancelBtn: document.getElementById('cancel-btn'),
-            sendBtn: document.getElementById('send-btn'),
-            emailInput: document.getElementById('email-input'),
-            modalInfoTitle: document.getElementById('modal-info-title'),
-            modalInfoDesc: document.getElementById('modal-info-description'),
-            keyboard: document.getElementById('virtual-keyboard')
+    /* ============================================================= */
+    /* 1. GLOBAL VARIABLES                                          */
+    /* ============================================================= */
+    const maps = @json($maps);
+    const currentLang = '{{ $locale ?? "uz" }}';
+
+    const $ = id => document.getElementById(id);
+    const els = {
+        wrapper: $('map-wrapper'),
+        mapInner: $('map-inner'),
+        mapImg: $('map-image'),
+        markerCont: $('marker-container'),
+        infoPanel: $('marker-info'),
+        carousel: $('image-carousel'),
+        title: $('info-title'),
+        desc: $('info-description'),
+        closeInfo: $('close-info'),
+        sendBtn: $('send-email-btn'),
+        zoomIn: $('zoom-in'),
+        zoomOut: $('zoom-out'),
+        reset: $('reset-view'),
+        loading: $('loading'),
+        modal: $('email-modal'),
+        modalClose: $('modal-close'),
+        cancel: $('cancel-btn'),
+        send: $('send-btn'),
+        emailInp: $('email-input'),
+        modalTitle: $('modal-info-title'),
+        modalDesc: $('modal-info-description'),
+        keyboard: $('virtual-keyboard'),
+        animatedTitle: $('animated-title')
+    };
+
+    let scale = 1, minScale = 1, maxScale = 3;
+    let tx = 0, ty = 0;
+    let isPanning = false, startX = 0, startY = 0;
+    const ZOOM_STEP = 0.25;
+    let imgW = 0, imgH = 0;
+    let currentMap = null;
+    let capsLock = false;
+
+    const KB_LAYOUT = [
+        ['1','2','3','4','5','6','7','8','9','0','-','_','←'],
+        ['q','w','e','r','t','y','u','i','o','p','@'],
+        ['a','s','d','f','g','h','j','k','l','.'],
+        ['CAPS','z','x','c','v','b','n','m','CAPS'],
+    ];
+
+    /* ============================================================= */
+    /* 2. HARFMA-HARF ANIMATSIYA                                   */
+    /* ============================================================= */
+    function startLetterAnimation() {
+        const text = "{{ __('messages.Uzbekistan Travel') }}";
+        const titleEl = els.animatedTitle;
+        titleEl.textContent = '';
+        titleEl.style.opacity = '1';
+
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < text.length) {
+                titleEl.textContent += text[i];
+                i++;
+            } else {
+                clearInterval(interval);
+            }
+        }, 120); // Harf orasi 120ms — sekin, jiddiy
+    }
+
+    /* ============================================================= */
+    /* 3. KEYBOARD                                                 */
+    /* ============================================================= */
+    function renderKB() {
+        els.keyboard.innerHTML = '';
+        KB_LAYOUT.forEach(row => {
+            const r = document.createElement('div');
+            r.className = 'keyboard-row';
+            row.forEach(k => {
+                const b = document.createElement('button');
+                b.className = 'keyboard-key';
+                if (['←','CAPS','Enter',' '].includes(k)) b.classList.add('special');
+
+                // Harflarni faqat CAPS bosilganda katta qilish
+                if (k.length === 1 && /[a-z]/.test(k)) {
+                    b.textContent = capsLock ? k.toUpperCase() : k;
+                } else {
+                    b.textContent = k === ' ' ? '' : k;
+                }
+
+                b.dataset.key = k;
+                if (k === 'CAPS') {
+                    b.classList.toggle('caps-active', capsLock);
+                    b.textContent = 'CAPS';
+                }
+                if (k === ' ') b.innerHTML = '&nbsp;';
+                b.onclick = () => kbPress(k);
+                r.appendChild(b);
+            });
+            els.keyboard.appendChild(r);
+        });
+    }
+
+    function kbPress(k) {
+        if (k === 'CAPS') {
+            capsLock = !capsLock;
+            renderKB();
+            return;
+        }
+        if (k === '←') {
+            els.emailInp.value = els.emailInp.value.slice(0, -1);
+        } else if (k === 'Enter') {
+            sendEmail();
+        } else if (k !== ' ') {
+            // Harflarni faqat CAPS bosilganda katta kiritish
+            if (k.length === 1 && /[a-z]/.test(k)) {
+                els.emailInp.value += capsLock ? k.toUpperCase() : k;
+            } else {
+                els.emailInp.value += k;
+            }
+        }
+        els.emailInp.focus();
+    }
+
+    function showKB() {
+        els.keyboard.style.display = 'block';
+        renderKB();
+        els.modal.style.transform = 'translateY(-110px)';
+        els.modal.style.transition = 'transform 0.3s ease';
+    }
+
+    function hideKB() {
+        els.keyboard.style.display = 'none';
+        els.modal.style.transform = 'translateY(0)';
+    }
+
+    /* ============================================================= */
+    /* 4. CLAMP — TO'LIQ TO'G'RI                                   */
+    /* ============================================================= */
+    function clamp() {
+        const wrapperW = els.wrapper.clientWidth;
+        const wrapperH = els.wrapper.clientHeight;
+        const scaledW = imgW * scale;
+        const scaledH = imgH * scale;
+
+        if (scaledW > wrapperW) {
+            const maxTx = (scaledW - wrapperW) / (2 * scale);
+            const minTx = -maxTx;
+            tx = Math.max(minTx, Math.min(maxTx, tx));
+        } else {
+            tx = 0;
+        }
+
+        if (scaledH > wrapperH) {
+            const maxTy = (scaledH - wrapperH) / (2 * scale);
+            const minTy = -maxTy;
+            ty = Math.max(minTy, Math.min(maxTy, ty));
+        } else {
+            ty = 0;
+        }
+    }
+
+    /* ============================================================= */
+    /* 5. MARKER ADJUST                                            */
+    /* ============================================================= */
+    function adjustMarkers() {
+        const wrapperW = els.wrapper.clientWidth;
+        const wrapperH = els.wrapper.clientHeight;
+        const scaledW = imgW * scale;
+        const scaledH = imgH * scale;
+
+        const offsetX = scaledW > wrapperW ? 0 : (wrapperW - scaledW) / 2 / scale;
+        const offsetY = scaledH > wrapperH ? 0 : (wrapperH - scaledH) / 2 / scale;
+
+        document.querySelectorAll('.marker').forEach(m => {
+            const d = maps.find(x => x.id == m.dataset.id);
+            if (!d) return;
+
+            const px = (d.longitude / 100) * imgW + offsetX;
+            const py = (d.latitude / 100) * imgH + offsetY;
+
+            m.style.left = `${(px / imgW) * 100}%`;
+            m.style.top = `${(py / imgH) * 100}%`;
+        });
+    }
+
+    /* ============================================================= */
+    /* 6. TRANSFORM                                                */
+    /* ============================================================= */
+    function applyTransform() {
+        els.mapInner.style.transition = isPanning ? 'none' : 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        els.mapInner.style.transform = `scale(${scale}) translate(${tx}px, ${ty}px)`;
+    }
+
+    /* ============================================================= */
+    /* 7. MAP INITIALISATION                                        */
+    /* ============================================================= */
+    function initMap() {
+        const rect = els.wrapper.getBoundingClientRect();
+        imgW = els.mapImg.naturalWidth;
+        imgH = els.mapImg.naturalHeight;
+
+        if (!imgW || !imgH) return showImageError();
+
+        const fitW = rect.width / imgW;
+        const fitH = rect.height / imgH;
+        scale = Math.min(fitW, fitH) * 2;
+        minScale = scale;
+
+        tx = 0; ty = 0;
+        createMarkers();
+        clamp();
+        adjustMarkers();
+        applyTransform();
+    }
+
+    function createMarkers() {
+        els.markerCont.innerHTML = '';
+        maps.forEach(m => {
+            const el = document.createElement('div');
+            el.className = 'marker';
+            el.dataset.id = m.id;
+            el.title = m.name;
+            el.onclick = e => { e.stopPropagation(); zoomToMarker(el, m); };
+            els.markerCont.appendChild(el);
+        });
+    }
+
+    /* ============================================================= */
+    /* 8. ZOOM & RESET                                             */
+    /* ============================================================= */
+    function zoomIn() {
+        scale = Math.min(maxScale, scale + ZOOM_STEP);
+        clamp(); adjustMarkers(); applyTransform();
+    }
+
+    function zoomOut() {
+        scale = Math.max(minScale, scale - ZOOM_STEP);
+        clamp(); adjustMarkers(); applyTransform();
+    }
+
+    function resetView() {
+        const r = els.wrapper.getBoundingClientRect();
+        scale = Math.min(r.width / imgW, r.height / imgH) * 2;
+        minScale = scale;
+        tx = ty = 0;
+        document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
+        els.infoPanel.classList.remove('active');
+        closeModal();
+        clamp(); adjustMarkers(); applyTransform();
+    }
+
+    /* ============================================================= */
+    /* 9. MARKER → INFO PANEL                                      */
+    /* ============================================================= */
+    function showCarousel(url) {
+        els.carousel.innerHTML = '';
+        if (!url) {
+            els.carousel.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f8f9fa;color:#6c757d;font-size:1.1rem;">{{ __('messages.No image') }}</div>`;
+            return;
+        }
+        const img = new Image();
+        img.src = url;
+        img.alt = 'Place';
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:16px;';
+        img.onerror = () => img.src = 'https://via.placeholder.com/400x280?text=Not+Found';
+        els.carousel.appendChild(img);
+    }
+
+    function zoomToMarker(el, data) {
+        document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
+        el.classList.add('active');
+        currentMap = data;
+
+        els.title.textContent = data.name;
+        els.desc.textContent = data.description || '{{ __('messages.No description.') }}';
+        showCarousel(data.image_url);
+        els.infoPanel.classList.add('active');
+
+        const mr = el.getBoundingClientRect();
+        const wr = els.wrapper.getBoundingClientRect();
+        const cx = mr.left + mr.width / 2 - wr.left;
+        const cy = mr.top + mr.height / 2 - wr.top;
+        const targetX = (wr.width - 420) / 2;
+        const targetY = wr.height / 2;
+        const targetScale = Math.min(maxScale, scale * 1.5);
+
+        tx += (targetX - cx) / scale;
+        ty += (targetY - cy) / scale;
+        scale = targetScale;
+
+        clamp(); adjustMarkers(); applyTransform();
+    }
+
+    /* ============================================================= */
+    /* 10. EMAIL MODAL                                             */
+    /* ============================================================= */
+    function openModal() {
+        if (!currentMap) return alert('{{ __('messages.Select a location first!') }}');
+        els.modalTitle.textContent = currentMap.name;
+        els.modalDesc.textContent = currentMap.description;
+        els.emailInp.value = '';
+        els.modal.classList.add('active');
+        setTimeout(() => els.emailInp.focus(), 150);
+    }
+
+    function closeModal() {
+        els.modal.classList.remove('active');
+        hideKB();
+        els.emailInp.value = '';
+    }
+
+    async function sendEmail() {
+        const mail = els.emailInp.value.trim();
+        if (!mail || !/^\S+@\S+\.\S+$/.test(mail)) {
+            alert('{{ __('messages.Valid email required!') }}');
+            return;
+        }
+
+        els.send.disabled = true;
+        els.send.innerHTML = '<i class="fas fa-spinner fa-spin"></i> {{ __('messages.Sending…') }}';
+
+        try {
+            const r = await fetch('{{ route("send.map.email") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ email: mail, map_id: currentMap.id, lang: currentLang })
+            });
+            const j = await r.json();
+            alert(j.success ? (j.message || '{{ __('messages.Sent!') }}') : '{{ __('messages.Error') }}: ' + (j.error || 'unknown'));
+            if (j.success) closeModal();
+        } catch {
+            alert('{{ __('messages.Network error!') }}');
+        } finally {
+            els.send.disabled = false;
+            els.send.innerHTML = '<i class="fas fa-paper-plane"></i> {{ __('messages.Send') }}';
+        }
+    }
+
+    /* ============================================================= */
+    /* 11. IMAGE LOAD — 100% ISHONCHLI                             */
+    /* ============================================================= */
+    function showImageError() {
+        els.loading.innerHTML = `
+            <div style="color:#fff;text-align:center;padding:20px;">
+                <div style="font-size:3rem;margin-bottom:20px;">Warning</div>
+                <div style="font-size:1.5rem;margin-bottom:15px;">{{ __('messages.Map image not loaded') }}</div>
+                <button onclick="location.reload()" 
+                        style="padding:12px 24px;background:#f5576c;color:white;border:none;border-radius:12px;font-size:1rem;cursor:pointer;">
+                    {{ __('messages.Refresh') }}
+                </button>
+            </div>
+        `;
+    }
+
+    function startAppWhenReady() {
+        const img = els.mapImg;
+
+        // Harf animatsiyasini boshlash
+        startLetterAnimation();
+
+        // Rasim yuklanishini kutish
+        if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+            setTimeout(hideLoadingAndInit, 800);
+            return;
+        }
+
+        let attempts = 0;
+        const maxAttempts = 100;
+        const check = setInterval(() => {
+            if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                clearInterval(check);
+                setTimeout(hideLoadingAndInit, 800);
+            } else if (++attempts >= maxAttempts) {
+                clearInterval(check);
+                showImageError();
+            }
+        }, 100);
+
+        img.onload = () => {
+            clearInterval(check);
+            setTimeout(hideLoadingAndInit, 800);
         };
 
-        let scale = 1, minScale = 1, maxScale = 3;
-        let translateX = 0, translateY = 0;
-        let isPanning = false, startX = 0, startY = 0;
-        const zoomSpeed = 0.2;
-        let imgW = 0, imgH = 0;
-        const boundaries = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+        img.onerror = () => {
+            clearInterval(check);
+            showImageError();
+        };
+    }
 
-        let capsLock = false;
-        const keyboardLayout = [
-            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '_', 'Backspace'],
-            ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '@'],
-            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '.',],
-            ['CAPS', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'CAPS'],
-            ['Space', 'Enter', 'CLOSE']
-        ];
+    function hideLoadingAndInit() {
+        const loading = els.loading;
+        loading.style.transition = 'opacity 0.8s ease';
+        loading.style.opacity = '0';
+        setTimeout(() => {
+            loading.style.display = 'none';
+            initMap();
+        }, 800);
+    }
 
-        // ===================================
-        // 2. KEYBOARD
-        // ===================================
-        function showKeyboard() {
-            elements.keyboard.style.display = 'block';
-            renderKeyboard();
-        }
+    /* ============================================================= */
+    /* 12. EVENT LISTENERS                                          */
+    /* ============================================================= */
+    function bindEvents() {
+        els.zoomIn.onclick = zoomIn;
+        els.zoomOut.onclick = zoomOut;
+        els.reset.onclick = resetView;
+        els.closeInfo.onclick = resetView;
+        els.sendBtn.onclick = openModal;
+        els.modalClose.onclick = closeModal;
+        els.cancel.onclick = closeModal;
+        els.send.onclick = sendEmail;
+        els.emailInp.onfocus = () => {
+            showKB();
+            setTimeout(() => els.emailInp.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+        };
+        els.emailInp.onkeydown = e => e.key === 'Enter' && sendEmail();
+        els.modal.onclick = e => e.target === els.modal && closeModal();
 
-        function hideKeyboard() {
-            elements.keyboard.style.display = 'none';
-        }
-
-        function renderKeyboard() {
-            elements.keyboard.innerHTML = '';
-            keyboardLayout.forEach(row => {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'keyboard-row';
-                row.forEach(key => {
-                    const btn = document.createElement('button');
-                    btn.className = 'keyboard-key';
-                    if (['Backspace', 'Enter', 'CAPS', 'CLOSE', 'Space'].includes(key)) {
-                        btn.classList.add('special');
-                    }
-                    btn.textContent = (capsLock && key.length === 1) ? key.toUpperCase() : key;
-                    btn.onclick = () => handleKeyPress(key);
-                    rowDiv.appendChild(btn);
-                });
-                elements.keyboard.appendChild(rowDiv);
-            });
-        }
-
-        function handleKeyPress(key) {
-            if (key === 'CAPS') {
-                capsLock = !capsLock;
-                renderKeyboard();
-                return;
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                if (els.modal.classList.contains('active')) closeModal();
+                else if (els.infoPanel.classList.contains('active')) resetView();
             }
-            if (key === 'Backspace') elements.emailInput.value = elements.emailInput.value.slice(0, -1);
-            else if (key === 'Enter') sendEmail();
-            else if (key === 'CLOSE') hideKeyboard();
-            else if (key === 'Space') elements.emailInput.value += ' ';
-            else elements.emailInput.value += capsLock && key.length === 1 ? key.toUpperCase() : key;
-            elements.emailInput.focus();
-        }
+        });
 
-        // ===================================
-        // 3. MAP INIT
-        // ===================================
-        function initMap() {
-            const rect = elements.wrapper.getBoundingClientRect();
-            imgW = elements.mapImage.naturalWidth;
-            imgH = elements.mapImage.naturalHeight;
+        // Wheel
+        els.wrapper.addEventListener('wheel', e => {
+            e.preventDefault();
+            scale = Math.max(minScale, Math.min(maxScale, scale + (e.deltaY < 0 ? 1 : -1) * ZOOM_STEP));
+            clamp(); adjustMarkers(); applyTransform();
+        }, { passive: false });
 
-            const scaleW = rect.width / imgW;
-            const scaleH = rect.height / imgH;
-            const initScale = Math.min(scaleW, scaleH);
-            scale = initScale * 2.0;
-            minScale = scale;
-
-            createMarkers();
-            adjustMarkers();
-            applyTransform();
-        }
-
-        function createMarkers() {
-            elements.markerContainer.innerHTML = '';
-            maps.forEach(map => {
-                const markerEl = document.createElement('div');
-                markerEl.className = 'marker';
-                markerEl.dataset.id = map.id;
-                markerEl.title = map.name_en || 'Place';
-                markerEl.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    zoomToMarker(markerEl, map);
-                });
-                elements.markerContainer.appendChild(markerEl);
-            });
-        }
-
-        function adjustMarkers() {
-            const contW = elements.mapInner.offsetWidth;
-            const contH = elements.mapInner.offsetHeight;
-            const fit = Math.min(contW / imgW, contH / imgH);
-            const dispW = imgW * fit;
-            const dispH = imgH * fit;
-            const offX = (contW - dispW) / 2;
-            const offY = (contH - dispH) / 2;
-
-            document.querySelectorAll('.marker').forEach(marker => {
-                const mapData = maps.find(m => m.id == marker.dataset.id);
-                if (!mapData) return;
-                const px = (mapData.longitude / 100) * imgW * fit + offX;
-                const py = (mapData.latitude / 100) * imgH * fit + offY;
-                marker.style.left = `${(px / contW) * 100}%`;
-                marker.style.top = `${(py / contH) * 100}%`;
-            });
-        }
-
-        function showImage(imgUrl) {
-            elements.imageCarousel.innerHTML = '';
-            if (!imgUrl) {
-                const placeholder = document.createElement('div');
-                placeholder.textContent = 'No Image Available';
-                placeholder.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f8f9fa;color:#6c757d;font-size:1.1rem;';
-                elements.imageCarousel.appendChild(placeholder);
-                return;
+        // Mouse Pan
+        const mouse = {
+            down: e => {
+                if (e.target.closest('.marker')) return;
+                if (imgW * scale <= els.wrapper.clientWidth && imgH * scale <= els.wrapper.clientHeight) return;
+                isPanning = true;
+                startX = e.clientX - tx * scale;
+                startY = e.clientY - ty * scale;
+                els.wrapper.style.cursor = 'grabbing';
+            },
+            move: e => {
+                if (!isPanning) return;
+                tx = (e.clientX - startX) / scale;
+                ty = (e.clientY - startY) / scale;
+                clamp();
+                requestAnimationFrame(() => { applyTransform(); adjustMarkers(); });
+            },
+            up: () => {
+                isPanning = false;
+                els.wrapper.style.cursor = 'grab';
             }
-            const img = document.createElement('img');
-            img.src = imgUrl;
-            img.alt = 'Place Image';
-            img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:16px;';
-            img.onerror = () => img.src = 'https://via.placeholder.com/400x280?text=Image+Not+Found';
-            elements.imageCarousel.appendChild(img);
-        }
+        };
+        ['mousedown', 'mousemove', 'mouseup', 'mouseleave'].forEach((ev, i) => 
+            els.wrapper.addEventListener(ev, mouse[['down','move','up','up'][i]])
+        );
 
-        function zoomToMarker(markerEl, mapData) {
-            document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
-            markerEl.classList.add('active');
-            currentMap = mapData;
-
-            elements.infoTitle.textContent = mapData.name_en || 'Place';
-            elements.infoDesc.textContent = mapData.description_en || 'No description available.';
-            showImage(mapData.image_url || (mapData.image ? '/storage/' + mapData.image : null));
-
-            elements.markerInfo.classList.add('active');
-
-            const markerRect = markerEl.getBoundingClientRect();
-            const wrapperRect = elements.wrapper.getBoundingClientRect();
-            const centerX = markerRect.left + markerRect.width / 2 - wrapperRect.left;
-            const centerY = markerRect.top + markerRect.height / 2 - wrapperRect.top;
-            const targetX = (wrapperRect.width - 420) / 2;
-            const targetY = wrapperRect.height / 2;
-            const targetScale = Math.min(maxScale, scale * 1.5);
-
-            translateX += (targetX - centerX) / scale;
-            translateY += (targetY - centerY) / scale;
-            scale = targetScale;
-            recalcBounds();
+        // Touch
+        els.wrapper.addEventListener('touchstart', e => {
+            if (e.touches.length !== 1) return;
+            isPanning = true;
+            startX = e.touches[0].clientX - tx * scale;
+            startY = e.touches[0].clientY - ty * scale;
+        }, { passive: true });
+        els.wrapper.addEventListener('touchmove', e => {
+            if (!isPanning || e.touches.length !== 1) return;
+            e.preventDefault();
+            tx = (e.touches[0].clientX - startX) / scale;
+            ty = (e.touches[0].clientY - startY) / scale;
             clamp();
-            applyTransform();
-        }
+            requestAnimationFrame(() => { applyTransform(); adjustMarkers(); });
+        }, { passive: false });
+        els.wrapper.addEventListener('touchend', () => isPanning = false);
 
-        // ===================================
-        // 4. ZOOM & PAN
-        // ===================================
-        function recalcBounds() {
-            const wrapperRect = elements.wrapper.getBoundingClientRect();
-            const displayW = elements.mapImage.offsetWidth * scale;
-            const displayH = elements.mapImage.offsetHeight * scale;
-            const overflowX = Math.max(0, (displayW - wrapperRect.width) / 2);
-            const overflowY = Math.max(0, (displayH - wrapperRect.height) / 2);
-            boundaries.minX = -overflowX / scale;
-            boundaries.maxX = overflowX / scale;
-            boundaries.minY = -overflowY / scale;
-            boundaries.maxY = overflowY / scale;
-        }
-
-        function clamp() {
-            translateX = Math.max(boundaries.minX, Math.min(boundaries.maxX, translateX));
-            translateY = Math.max(boundaries.minY, Math.min(boundaries.maxY, translateY));
-        }
-
-        function applyTransform() {
-            elements.mapInner.style.transition = isPanning ? 'none' : 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-            elements.mapInner.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
-        }
-
-        function zoomIn() { scale = Math.min(maxScale, scale + zoomSpeed); recalcBounds(); clamp(); applyTransform(); }
-        function zoomOut() { scale = Math.max(minScale, scale - zoomSpeed); recalcBounds(); clamp(); applyTransform(); }
-
-        function resetView() {
-            const rect = elements.wrapper.getBoundingClientRect();
-            const scaleW = rect.width / imgW;
-            const scaleH = rect.height / imgH;
-            scale = Math.min(scaleW, scaleH) * 2;
-            minScale = scale;
-            translateX = 0;
-            translateY = 0;
+        // Click outside
+        els.wrapper.onclick = e => {
+            if (e.target.closest('.marker,.marker-info,.controls')) return;
+            els.infoPanel.classList.remove('active');
+            closeModal();
             document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
-            elements.markerInfo.classList.remove('active');
-            closeEmailModal();
-            recalcBounds();
-            applyTransform();
-        }
+        };
 
-        // ===================================
-        // 5. EMAIL MODAL
-        // ===================================
-        function openEmailModal() {
-            if (!currentMap) return alert('Please select a location first!');
-            elements.modalInfoTitle.textContent = currentMap.name_en || 'Place';
-            elements.modalInfoDesc.textContent = currentMap.description_en || 'No description';
-            elements.emailInput.value = '';
-            elements.emailModal.classList.add('active');
-            
-            setTimeout(() => {
-                elements.emailInput.focus();
-                const modalContent = elements.emailModal.querySelector('.modal-content');
-                modalContent.scrollTop = 0;
-            }, 100);
-        }
+        window.addEventListener('resize', () => {
+            clamp(); adjustMarkers(); applyTransform();
+        });
+    }
 
-        function closeEmailModal() {
-            elements.emailModal.classList.remove('active');
-            hideKeyboard();
-            elements.emailInput.value = '';
-        }
+    /* ============================================================= */
+    /* 13. INIT                                                    */
+    /* ============================================================= */
+    function init() {
+        bindEvents();
+        startAppWhenReady();
+    }
 
-        async function sendEmail() {
-            const email = elements.emailInput.value.trim();
-            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-                alert('Please enter a valid email address!');
-                elements.emailInput.focus();
-                return;
-            }
-            if (!currentMap) return alert('No location selected!');
-
-            elements.sendBtn.disabled = true;
-            elements.sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-
-            try {
-                const response = await fetch('{{ route("send.map.email") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({ email, map_id: currentMap.id, lang: 'en' })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert('Email sent successfully!');
-                    closeEmailModal();
-                } else {
-                    alert('Error: ' + (result.error || 'Unknown error'));
-                }
-            } catch (error) {
-                alert('Network error! Please try again.');
-            } finally {
-                elements.sendBtn.disabled = false;
-                elements.sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
-            }
-        }
-
-        // ===================================
-        // 6. EVENT LISTENERS
-        // ===================================
-        function setupEventListeners() {
-            elements.zoomInBtn.addEventListener('click', zoomIn);
-            elements.zoomOutBtn.addEventListener('click', zoomOut);
-            elements.resetBtn.addEventListener('click', resetView);
-            elements.closeInfo.addEventListener('click', resetView);
-            elements.sendEmailBtn.addEventListener('click', openEmailModal);
-            elements.modalClose.addEventListener('click', closeEmailModal);
-            elements.cancelBtn.addEventListener('click', closeEmailModal);
-            elements.sendBtn.addEventListener('click', sendEmail);
-            elements.emailInput.addEventListener('focus', showKeyboard);
-            elements.emailInput.addEventListener('keypress', e => e.key === 'Enter' && sendEmail());
-            elements.emailModal.addEventListener('click', e => e.target === elements.emailModal && closeEmailModal());
-            document.addEventListener('keydown', e => e.key === 'Escape' && (elements.emailModal.classList.contains('active') ? closeEmailModal() : elements.markerInfo.classList.contains('active') && resetView()));
-
-            elements.wrapper.addEventListener('wheel', e => { e.preventDefault(); scale = Math.min(maxScale, Math.max(minScale, scale + (e.deltaY < 0 ? 1 : -1) * zoomSpeed)); recalcBounds(); clamp(); applyTransform(); }, { passive: false });
-
-            ['mousedown', 'mousemove', 'mouseup', 'mouseleave'].forEach((ev, i, arr) => {
-                elements.wrapper.addEventListener(ev, e => {
-                    if (e.target.closest('.marker')) return;
-                    if (ev === 'mousedown') { isPanning = true; startX = e.clientX - translateX * scale; startY = e.clientY - translateY * scale; elements.wrapper.style.cursor = 'grabbing'; }
-                    else if (ev === 'mousemove' && isPanning) { translateX = (e.clientX - startX) / scale; translateY = (e.clientY - startY) / scale; clamp(); requestAnimationFrame(applyTransform); }
-                    else if (arr.indexOf(ev) > 1) { isPanning = false; elements.wrapper.style.cursor = 'grab'; }
-                });
-            });
-
-            elements.wrapper.addEventListener('touchstart', e => { if (e.touches.length === 1) { isPanning = true; startX = e.touches[0].clientX - translateX * scale; startY = e.touches[0].clientY - translateY * scale; } });
-            elements.wrapper.addEventListener('touchmove', e => { if (isPanning && e.touches.length === 1) { e.preventDefault(); translateX = (e.touches[0].clientX - startX) / scale; translateY = (e.touches[0].clientY - startY) / scale; clamp(); requestAnimationFrame(applyTransform); } }, { passive: false });
-            elements.wrapper.addEventListener('touchend', () => isPanning = false);
-
-            elements.wrapper.addEventListener('click', e => {
-                if (e.target.closest('.marker') || e.target.closest('.marker-info') || e.target.closest('.controls')) return;
-                elements.markerInfo.classList.remove('active');
-                closeEmailModal();
-                document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
-            });
-
-            window.addEventListener('resize', () => {
-                const rect = elements.wrapper.getBoundingClientRect();
-                const scaleW = rect.width / imgW;
-                const scaleH = rect.height / imgH;
-                scale = Math.min(scaleW, scaleH) * 2;
-                minScale = scale;
-                translateX = 0;
-                translateY = 0;
-                recalcBounds();
-                adjustMarkers();
-                applyTransform();
-            });
-        }
-
-        // ===================================
-        // 7. INIT
-        // ===================================
-        function init() {
-            setupEventListeners();
-            elements.mapImage.onload = () => {
-                imgW = elements.mapImage.naturalWidth;
-                imgH = elements.mapImage.naturalHeight;
-                setTimeout(() => elements.loading.style.opacity = '0', 3500);
-                setTimeout(() => { elements.loading.style.display = 'none'; initMap(); }, 4300);
-            };
-            elements.mapImage.onerror = () => {
-                elements.loading.innerHTML = `<div style="color:#fff;text-align:center;"><div style="font-size:3rem;margin-bottom:20px;">Warning</div><div style="font-size:1.5rem;">Error loading map</div><div style="margin-top:10px;">Please refresh</div></div>`;
-            };
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
-    </script>
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+</script>
 </body>
 </html>

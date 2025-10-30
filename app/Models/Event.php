@@ -30,19 +30,19 @@ class Event extends Model
 
     public function category()
     {
-        return $this->belongsTo(EventCategory::class, 'category_id');
+        return $this->belongsTo(LibraryCategory::class, 'category_id');
     }
 
     public function getTitleAttribute()
     {
-        $lang = session('locale', 'uz'); // default uz
-        return $this->{'title_' . $lang} ?? $this->title_uz;
+        $lang = session('locale', 'en'); // default uz
+        return $this->{'title_' . $lang} ?? $this->title_en;
     }
 
     // 🔥 Dynamic description accessor
     public function getDescriptionAttribute()
     {
-        $lang = session('locale', 'uz');
-        return $this->{'description_' . $lang} ?? $this->description_uz;
+        $lang = session('locale', 'en');
+        return $this->{'description_' . $lang} ?? $this->description_en;
     }
 }
