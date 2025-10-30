@@ -71,7 +71,6 @@
         .sidebar .nav-link i {
             margin-right: 10px;
         }
-
         .card.border-start {
             border-left: 0.25rem solid !important;
         }
@@ -119,8 +118,15 @@
             <li class="nav-item-header my-2 text-uppercase text-white-50 small">SOZLAMALAR</li>
 
             <li class="nav-item mb-1">
-                <a class="nav-link {{ request()->routeIs('admin.settings.security') ? 'active' : '' }}" 
-                   href="#">
+                <a class="nav-link {{ request()->routeIs('admin.advertisement*') ? 'active' : '' }}"
+                   href="">
+                    <i class="bi bi-newspaper"></i> Reklama Sozlamalari
+                </a>
+            </li>
+
+            <li class="nav-item mb-1">
+                <a class="nav-link {{ request()->routeIs('admin.security*') ? 'active' : '' }}"
+                   href="{{route('admin.security.index')}}">
                     <i class="bi bi-shield-lock"></i> Xavfsizlik Sozlamalari
                 </a>
             </li>

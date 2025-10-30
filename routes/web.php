@@ -8,6 +8,7 @@ use App\Http\Controllers\EventController as ControllersEventController;
 use App\Http\Controllers\LibraryController as ControllersLibraryController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\EmailController;
+use \App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use PharIo\Manifest\Email;
@@ -51,19 +52,17 @@ Route::post('/send-event', [EmailController::class, 'sendEvent'])->name('send.ev
 Route::post('/send-map-email', [EmailController::class, 'sendMap'])->name('send.map.email');
 
 
-
-
 Route::middleware('auth')->group(function () {
 
-   Route::get('dashboard',[MainController::class, 'dashboard'])->name('admin.dashboard');
-   Route::get('maps', [MapController::class, 'index'])->name('admin.maps');
-   Route::get('maps/create', [MapController::class, 'create'])->name('admin.maps.create');
-   Route::post('maps', [MapController::class, 'store'])->name('admin.maps.store');
-   Route::get('maps/{id}/edit', [MapController::class, 'edit'])->name('admin.maps.edit');
-   Route::put('maps/{id}', [MapController::class, 'update'])->name('admin.maps.update');
-   Route::delete('maps/{id}', [MapController::class, 'destroy'])->name('admin.maps.destroy');
+    Route::get('dashboard', [MainController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('maps', [MapController::class, 'index'])->name('admin.maps');
+    Route::get('maps/create', [MapController::class, 'create'])->name('admin.maps.create');
+    Route::post('maps', [MapController::class, 'store'])->name('admin.maps.store');
+    Route::get('maps/{id}/edit', [MapController::class, 'edit'])->name('admin.maps.edit');
+    Route::put('maps/{id}', [MapController::class, 'update'])->name('admin.maps.update');
+    Route::delete('maps/{id}', [MapController::class, 'destroy'])->name('admin.maps.destroy');
 
-   //library
+    //library
     Route::get('libraries', [LibraryController::class, 'index'])->name('admin.libraries');
     Route::get('libraries/create', [LibraryController::class, 'create'])->name('admin.libraries.create');
     Route::post('libraries', [LibraryController::class, 'store'])->name('admin.libraries.store');
@@ -76,5 +75,10 @@ Route::middleware('auth')->group(function () {
     Route::post('events', [EventController::class, 'store'])->name('admin.events.store');
     Route::put('events/{id}', [EventController::class, 'update'])->name('admin.events.update');
     Route::delete('events/{id}', [EventController::class, 'destroy'])->name('admin.events.destroy');
+
+    //userInfo
+    Route::get('user-info', [UserController::class, 'index'])->name('admin.security.index');
+    Route::put('user-info-update/{id}', [UserController::class, 'update'])->name('admin.security.update');
+
 
 });
