@@ -115,7 +115,7 @@
             height: auto;
         }
 
-        /* === MODAL === */
+        /* === MODAL – KLAVYATURA CHIQGANDA YUQORIGA SILJISH === */
         .modal {
             display: none;
             position: fixed;
@@ -139,12 +139,13 @@
             border-radius: 16px;
             width: 90%;
             max-width: 420px;
-            max-height: 85vh;
+            max-height: 75vh;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             animation: modalPop 0.3s ease-out;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes modalPop {
@@ -152,18 +153,34 @@
             to { transform: scale(1); opacity: 1; }
         }
 
+        /* KLAVYATURA CHIQGANDA – MODAL YUQORIGA SILJIDI */
+        .keyboard-active .modern-modal {
+            transform: translateY(-100px) !important;
+        }
+
+        @media (max-height: 700px) {
+            .keyboard-active .modern-modal {
+                transform: translateY(-80px) !important;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .keyboard-active .modern-modal {
+                transform: translateY(-60px) !important;
+            }
+        }
+
         .modal-header {
             padding: 18px 20px;
-            color: white;
+            color: black;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: 600;
             flex-shrink: 0;
-            color: black;
         }
 
-        .modal-header h3 {
+        .modal-header p, .modal-header h3 {
             margin: 0;
             font-size: 1.2rem;
         }
@@ -171,7 +188,7 @@
         .modal-close {
             background: none;
             border: none;
-            color: white;
+            color: #1a1a1a;
             font-size: 1.4rem;
             cursor: pointer;
             padding: 4px;
@@ -182,7 +199,6 @@
             align-items: center;
             justify-content: center;
             transition: background 0.2s;
-            color: #1a1a1a;
         }
 
         .modal-close:hover {
@@ -208,6 +224,9 @@
             line-height: 1.6;
             margin-bottom: 20px;
             word-break: break-word;
+            max-height: 120px;
+            overflow-y: auto;
+            padding-right: 8px;
         }
 
         .form-group {
@@ -246,7 +265,6 @@
 
         .modal-footer {
             padding: 16px 20px;
-            background: #f8f9fa;
             display: flex;
             gap: 10px;
             justify-content: flex-end;
@@ -274,12 +292,12 @@
         }
 
         .btn-primary {
-            background: #007bff;
+            background: #1C3F3A;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #0056b3;
+            background: #16332e;
         }
 
         /* === VIRTUAL KEYBOARD === */
@@ -321,7 +339,6 @@
             background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
             color: #fff;
             border: none;
-            /* border-radius: 8px; */
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
@@ -334,22 +351,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
 
-        .virtual-keyboard button.special {
-            /* background: linear-gradient(145deg, #3a3a3a, #2a2a2a); */
-            /* font-weight: bold; */
-            /* color: #4CAF50; */
-        }
-
         .virtual-keyboard button.wide { flex: 2; }
-        .virtual-keyboard button.extra-wide { 
-            flex: 3; 
-            background: linear-gradient(145deg, #e91e63, #c2185b) !important;
-            color: white !important;
-        }
-
-        .virtual-keyboard button.extra-wide:active {
-            background: #ad1457 !important;
-        }
     </style>
 </head>
 
@@ -386,73 +388,74 @@
             <ul class="lang-dropdown" id="lang-dropdown">
                 <li data-lang="uz" data-flag="{{ $flags['uz'] }}"><img src="{{ $flags['uz'] }}" alt="Uzbek Flag" class="flag"> O'zbekcha</li>
                 <li data-lang="en" data-flag="{{ $flags['en'] }}"><img src="{{ $flags['en'] }}" alt="UK Flag" class="flag"> English</li>
-                <li data-lang="ru" data-flag="{{ $flags['ru'] }}">
-                    <img src="{{ $flags['ru'] }}" alt="Russia Flag" class="flag"> Русский
-                </li>
+                <li data-lang="ru" data-flag="{{ $flags['ru'] }}"><img src="{{ $flags['ru'] }}" alt="Russia Flag" class="flag"> Русский</li>
             </ul>
         </div>
     </div>
 </header>
 
 <main>
-    <div class="category-bar mb-3">
-        <button class="category-button {{ request()->is('libraries') ? 'active' : '' }}"
-                onclick="window.location='{{ route('libraries.index') }}'">
-            {{ __('messages.All') }}
-        </button>
-        @foreach($categories as $category)
-            <button class="category-button {{ request()->is('libraries/category/'.$category->id) ? 'active' : '' }}"
-                    onclick="window.location='{{ route('libraries.filter', $category->id) }}'">
-                {{ $category->name }}
+    <div class="container">
+        <div class="category-bar mb-3">
+            <button class="category-button {{ request()->is('libraries') ? 'active' : '' }}"
+                    onclick="window.location='{{ route('libraries.index') }}'">
+                All
             </button>
-        @endforeach
-    </div>
-
-    @if($materials->isEmpty())
-        <div class="empty-state">
-            <i class="fas fa-book-open"></i>
-            <h3>{{ __('messages.No material found') }}</h3>
-            <p>{{ __('messages.There are no materials in the library yet.') }}</p>
-        </div>
-    @else
-        @php $locale = app()->getLocale(); @endphp
-
-        <div class="library-grid">
-            @foreach($materials as $material)
-                @php
-                    $titleField = 'title_' . $locale;
-                    $descField = 'description_' . $locale;
-                    $filePathField = 'file_path_' . $locale;
-                    if (empty($material->$titleField)) continue;
-                    $filePath = storage_path('app/public/' . $material->$filePathField);
-                    $fileSize = file_exists($filePath) ? round(filesize($filePath) / 1048576, 1) . ' MB' : 'N/A';
-                @endphp
-
-                <div class="library-card">
-                    <img src="{{ asset('storage/' . $material->image) }}"
-                         alt="{{ $material->$titleField }}"
-                         class="card-image"
-                         onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80'">
-
-                    <div class="card-body">
-                        <h3 class="card-title">{{ $material->$titleField }}</h3>
-                        <p class="card-description">{{ $material->$descField }}</p>
-
-                        <div class="card-meta">
-                            <span class="card-pages">PDF Document</span>
-                        </div>
-
-                        <div class="card-actions">
-                            <button class="btn btn-primary"
-                                    onclick="openEmailModal({{ $material->id }}, '{{ addslashes($material->$titleField) }}', '{{ addslashes($material->$descField) }}')">
-                                {{ __('messages.Send to email') }}
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            @foreach($categories as $category)
+                <button class="category-button {{ request()->is('libraries/category/'.$category->id) ? 'active' : '' }}"
+                        onclick="window.location='{{ route('libraries.filter', $category->id) }}'">
+                    {{ $category->name }}
+                </button>
             @endforeach
         </div>
-    @endif
+
+        @if($materials->isEmpty())
+            <div class="empty-state text-center py-5">
+                <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                <h3 class="text-muted">No material found</h3>
+                <p class="text-muted">There are no materials in the library yet.</p>
+            </div>
+        @else
+            @php $locale = app()->getLocale(); @endphp
+
+            <div class="library-grid">
+                @foreach($materials as $material)
+                    @php
+                        $titleField = 'title_' . $locale;
+                        $descField = 'description_' . $locale;
+                        $filePathField = 'file_path_' . $locale;
+                        if (empty($material->$titleField)) continue;
+                        $filePath = storage_path('app/public/' . $material->$filePathField);
+                        $fileSize = file_exists($filePath) ? round(filesize($filePath) / 1048576, 1) . ' MB' : '';
+                    @endphp
+
+                    <div class="library-card">
+                        <img src="{{ asset('storage/' . $material->image) }}"
+                             alt="{{ $material->$titleField }}"
+                             class="card-image"
+                             onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80'">
+
+                        <div class="card-body">
+                            <h3 class="card-title">{{ $material->$titleField }}</h3>
+                            <p class="card-description">{{ Str::limit($material->$descField, 80) }}</p>
+
+                            <div class="card-meta">
+                                <span class="card-pages">PDF Document</span>
+                                <span class="card-size">{{ $fileSize }}</span>
+                            </div>
+
+                            <div class="card-actions">
+                                <button class="btn btn-primary"
+                                        onclick="openEmailModal({{ $material->id }}, '{{ addslashes($material->$titleField) }}', '{{ addslashes($material->$descField) }}')">
+                                    <i class="fas fa-envelope"></i>{{ __('messages.Send to email') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
 </main>
 
 <button onclick="scrollToTop()" id="scrollToTopBtn" title="Yuqoriga" class="scroll-to-top-btn">
@@ -463,21 +466,19 @@
 <div class="modal" id="emailModal">
     <div class="modal-content modern-modal">
         <div class="modal-header">
-            <p><strong>{{ __('messages.📩 Send by email') }}</strong></p>
+            <p><strong>{{ __('messages.Send the material to your email') }}</strong></p>
             <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
         </div>
 
         <div class="modal-body">
             <div class="material-info">
-                <h3 id="modalMaterialName">Material nomi</h3>
-                <p id="modalMaterialDescription" class="material-desc">
-                    Bu yerda tanlangan material haqida qisqacha ma’lumot joylashadi. Agar matn juda uzun bo'lsa, u avtomatik ravishda scroll bo'ladi va foydalanuvchi o'qiy oladi. Klaviatura chiqsa ham, modal joyida turadi.
-                </p>
+                <h3 id="modalMaterialName"></h3>
+                <p id="modalMaterialDescription" class="material-desc"></p>
             </div>
 
             <div class="form-group">
-                <label for="emailInput">{{__('messages.📧 Your email address')}}</label>
-                <input type="email" id="emailInput" class="form-input" placeholder=".email@example.com" required>
+                <label for="emailInput">{{ __('messages.Your email address') }}</label>
+                <input type="email" id="emailInput" class="form-input" placeholder="excample@gmail.com" required>
                 <small class="note">
                     {{ __('messages.* We will also send you the latest news and useful materials to your email address.') }}
                 </small>
@@ -487,24 +488,20 @@
         <div class="modal-footer">
             <button class="btn btn-secondary" onclick="closeModal()">{{ __('messages.Cancel') }}</button>
             <button class="btn btn-primary" onclick="sendEmail()">
-                {{ __('messages.Send to email') }}
+               <i class="fas fa-paper-plane"></i> {{ __('messages.Send to email') }}
             </button>
         </div>
     </div>
 </div>
 
-<!-- Virtual Keyboard (tashqarida) -->
+<!-- Virtual Keyboard -->
 <div id="virtual-keyboard" class="virtual-keyboard"></div>
 
 <!-- Success Modal -->
 <div class="modal" id="successModal">
     <div class="modal-content modern-modal">
-        <div class="modal-header">
-            <h3>{{__('messages.Success')}}</h3>
-            <button class="modal-close" onclick="closeSuccessModal()"><i class="fas fa-times"></i></button>
-        </div>
         <div class="modal-body">
-            <p>{{__('messages.Material sent successfully')}}</p>
+            <p>{{ __('messages.Material sent successfully') }}</p>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" onclick="closeSuccessModal()">OK</button>
@@ -526,6 +523,7 @@
 <script>
     // === Virtual Keyboard ===
     let isUpperCase = false;
+    let keyboardShown = false;
     const keyboardLayout = [
         ['1','2','3','4','5','6','7','8','9','0','-','_','←'],
         ['q','w','e','r','t','y','u','i','o','p','@'],
@@ -534,14 +532,20 @@
     ];
 
     function showKeyboard() {
+        if (keyboardShown) return;
         const keyboard = document.getElementById('virtual-keyboard');
         keyboard.classList.add('show');
+        document.body.classList.add('keyboard-active'); // MODALNI SILJISH UCHUN
         renderKeyboard();
+        keyboardShown = true;
     }
 
     function hideKeyboard() {
+        if (!keyboardShown) return;
         const keyboard = document.getElementById('virtual-keyboard');
         keyboard.classList.remove('show');
+        document.body.classList.remove('keyboard-active'); // SILJISH O‘CHADI
+        keyboardShown = false;
     }
 
     function renderKeyboard() {
@@ -561,16 +565,12 @@
                 }
                 if (key === '←') displayKey = '←';
                 if (key === 'CAPS') displayKey = 'CAPS';
-                if (key === 'Enter') displayKey = 'Enter';
-                if (key === 'Close') displayKey = 'Close';
 
                 btn.textContent = displayKey;
                 btn.onclick = () => handleKeyPress(key);
 
-                if (['CAPS', 'Enter', 'Close', '←'].includes(key)) {
+                if (['CAPS', '←'].includes(key)) {
                     btn.className = 'special';
-                    if (key === 'Close') btn.className += ' extra-wide';
-                    if (key === 'Enter') btn.className += ' wide';
                     if (key === '←') btn.className += ' wide';
                 }
 
@@ -594,9 +594,6 @@
                 isUpperCase = !isUpperCase;
                 renderKeyboard();
                 break;
-            case 'Close':
-                hideKeyboard();
-                break;
             default:
                 input.value += isUpperCase ? key.toUpperCase() : key;
                 break;
@@ -604,9 +601,8 @@
         input.focus();
     }
 
+    // === Inactivity Timer ===
     let inactivityTime = 0;
-
-    // Harakat kuzatuvchi eventlar
     document.addEventListener('mousemove', resetTimer);
     document.addEventListener('click', resetTimer);
     document.addEventListener('scroll', resetTimer);
@@ -618,91 +614,10 @@
 
     setInterval(() => {
         inactivityTime++;
-
         if (inactivityTime === 60) {
             window.location.href = "{{ route('welcome') }}";
         }
-
     }, 1000);
-
-    // === Modal ===
-    let selectedMaterialId = null;
-
-    function openEmailModal(id, title, description) {
-        selectedMaterialId = id;
-        document.getElementById('modalMaterialName').textContent = title;
-        document.getElementById('modalMaterialDescription').textContent = description;
-        document.getElementById('emailModal').classList.add('show');
-        document.body.style.overflow = 'hidden';
-
-        setTimeout(() => {
-            document.getElementById('emailInput').focus();
-        }, 300);
-    }
-
-    function closeModal() {
-        document.getElementById('emailModal').classList.remove('show');
-        document.body.style.overflow = 'auto';
-        document.getElementById('emailInput').value = '';
-        hideKeyboard();
-    }
-
-    function openSuccessModal() {
-        document.getElementById('successModal').classList.add('show');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeSuccessModal() {
-        document.getElementById('successModal').classList.remove('show');
-        document.body.style.overflow = 'auto';
-    }
-
-    // === Email Send ===
-    async function sendEmail() {
-        const email = document.getElementById('emailInput').value.trim();
-        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-            alert('Iltimos, to\'g\'ri email kiriting');
-            return;
-        }
-
-        closeModal();
-        showLoadingAnimation();
-
-        const lang = document.getElementById('selected-lang-text').textContent.toLowerCase();
-
-        try {
-            const res = await fetch("{{ route('send.material') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ email, material_id: selectedMaterialId, lang })
-            });
-
-            hideLoadingAnimation();
-
-            if (res.ok) {
-                openSuccessModal();
-            } else {
-                const err = await res.json();
-                alert('Xatolik: ' + (err.error || 'Server xatosi'));
-            }
-        } catch (error) {
-            hideLoadingAnimation();
-            alert('Internet aloqasi yo\'q');
-        }
-    }
-
-    function showLoadingAnimation() {
-        document.getElementById('loadingModal').classList.add('show');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function hideLoadingAnimation() {
-        document.getElementById('loadingModal').classList.remove('show');
-        document.body.style.overflow = 'auto';
-    }
 
     // === Scroll to Top ===
     const scrollBtn = document.getElementById('scrollToTopBtn');
@@ -738,7 +653,84 @@
         });
     });
 
-    // === Input Focus & Keyboard ===
+    // === Modal & Email ===
+    let selectedMaterialId = null;
+
+    function openEmailModal(id, title, description) {
+        selectedMaterialId = id;
+        document.getElementById('modalMaterialName').textContent = title;
+        document.getElementById('modalMaterialDescription').textContent = description;
+        document.getElementById('emailModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('emailInput').value = '';
+        hideKeyboard();
+    }
+
+    function closeModal() {
+        document.getElementById('emailModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+        document.getElementById('emailInput').value = '';
+        hideKeyboard();
+    }
+
+    function openSuccessModal() {
+        document.getElementById('successModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSuccessModal() {
+        document.getElementById('successModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+
+    function showLoadingAnimation() {
+        document.getElementById('loadingModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hideLoadingAnimation() {
+        document.getElementById('loadingModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+
+    async function sendEmail() {
+        const email = document.getElementById('emailInput').value.trim();
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            alert('Iltimos, to\'g\'ri email kiriting');
+            return;
+        }
+
+        closeModal();
+        showLoadingAnimation();
+
+        const lang = document.getElementById('selected-lang-text').textContent.toLowerCase();
+
+        try {
+            const res = await fetch("{{ route('send.material') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ email, material_id: selectedMaterialId, lang })
+            });
+
+            hideLoadingAnimation();
+
+            if (res.ok) {
+                openSuccessModal();
+                setTimeout(closeSuccessModal, 3000);
+            } else {
+                const err = await res.json();
+                alert('Xatolik: ' + (err.error || 'Server xatosi'));
+            }
+        } catch (error) {
+            hideLoadingAnimation();
+            alert('Internet aloqasi yo\'q');
+        }
+    }
+
+    // Input fokusda – klaviatura chiqadi
     document.getElementById('emailInput').addEventListener('focus', showKeyboard);
 </script>
 </body>

@@ -35,8 +35,8 @@ return [
     'Material sent successfully' => 'Material sent successfully',
     'Send to email' => 'Send to email',
     '* We will also send you the latest news and useful materials to your email address.' => '* We will also send you the latest news and useful materials to your email address.',
-    '📧 Your email address' => '📧 Your email address',
-    '📩 Send by email' => '📩 Send by email',
+    'Your email address' => 'Your email address',
+    'Send by email' => 'Send by email',
     'All' => 'All',
     'No description.' =>'No description.',
     'Uzbekistan Travel' => 'Uzbekistan Travel',
@@ -46,7 +46,8 @@ return [
     'Sending…' => 'Sending…',
     'Send' => 'Send',
     'Map Info: :title' => 'Map Info: :title',
-    'Email sent successfully!' => 'Email sent successfully!'
+    'Email sent successfully!' => 'Email sent successfully!',
+    'Send the material to your email' =>'Send the material to your email'
 
 
 ];

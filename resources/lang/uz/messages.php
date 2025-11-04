@@ -36,8 +36,8 @@ return [
     'Material sent successfully' => 'Material muvaffaqiyatli yuborildi',
     'Send to email' =>'Elektron pochtaga yuboring',
     '* We will also send you the latest news and useful materials to your email address.' => '* Sizning email manzilingizga keyingi yangilik va foydali materiallar ham yuborib turamiz.',
-    '📧 Your email address' => '📧 Sizning elektron pochta manzilingiz',
-    '📩 Send by email' => '📩 Elektron pochta orqali yuboring',
+    'Your email address' => 'Sizning elektron pochta manzilingiz',
+    'Send by email' => 'Elektron pochta orqali yuboring',
     'All' => 'Barchasi',
     'No description' => "Tavsif yo'q",
     'Uzbekistan Travel' => 'Uzbekistan Travel',
@@ -45,11 +45,7 @@ return [
     'Uzbekistan Map – Interactive map'=>'Uzbekistan Map – Interactive map',
     'Sending…' => 'Yuborilmoqda…',
     'Map Info: :title' => 'Map Info: :title',
-    'Email sent successfully!' => 'Elektron pochtaga muvaffaqiyatli yuborildi!'
-  
-
-
-
-
+    'Email sent successfully!' => 'Elektron pochtaga muvaffaqiyatli yuborildi!',
+    'Send the material to your email' => 'Materialni elektron pochtangizga yuboring'
 
 ];

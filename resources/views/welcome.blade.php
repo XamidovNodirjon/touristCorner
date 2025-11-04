@@ -20,6 +20,7 @@
             background-repeat: no-repeat;
             background-size: cover;
             background-attachment: fixed;
+            overflow: auto;
         }
         /* ================================ */
 

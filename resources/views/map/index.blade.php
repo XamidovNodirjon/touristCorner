@@ -11,8 +11,9 @@
     <!-- Preload map image -->
     <link rel="preload" href="{{ asset('map/uzbekistan-map.png') }}?v={{ time() }}" as="image">
 
-    <!-- Font Awesome -->
+    <!-- Font Awesome + Inter -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -26,14 +27,14 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--c-dark);
             color: var(--c-white);
             min-height: 100vh;
             overflow: hidden;
         }
 
-        /* LOADING — YANGI: HARFMA-HARF + SPINNER */
+        /* LOADING */
         #loading {
             position: fixed;
             inset: 0;
@@ -295,294 +296,284 @@
         .back-button:hover { transform: translateX(-5px); }
         .back-button::before { content: "{{ __('messages.Back') }}"; font-size: 1.2rem; }
 
-        /* EMAIL MODAL */
+        /* === EMAIL MODAL – EVENTS & LIBRARY BILAN BIR XIL === */
         .email-modal {
+            display: none;
             position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            z-index: 100;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 20px;
+            transition: opacity 0.3s ease;
         }
 
-        .email-modal.active {
+        .email-modal.show {
+            display: flex;
             opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
         }
 
-        .modal-content {
-            background: #ffffff;
-            padding: 32px;
-            border-radius: 24px;
+        .modern-modal {
+            background: white;
+            border-radius: 16px;
             width: 90%;
-            max-width: 480px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
-            animation: modalPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-            position: relative;
-            border: 1px solid rgba(28, 63, 58, 0.1);
+            max-width: 420px;
+            max-height: 75vh;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalPop 0.3s ease-out;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes modalPop {
-            0% { opacity: 0; transform: scale(0.8) translateY(-40px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Klaviatura chiqqanda – modal yuqoriga siljiydi */
+        .keyboard-active .modern-modal {
+            transform: translateY(-100px) !important;
+        }
+
+        @media (max-height: 700px) {
+            .keyboard-active .modern-modal {
+                transform: translateY(-80px) !important;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .keyboard-active .modern-modal {
+                transform: translateY(-60px) !important;
+            }
         }
 
         .modal-header {
+            padding: 18px 20px;
+            color: black;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            flex-shrink: 0;
         }
 
-        .modal-title {
-            font-size: 1.55rem;
-            font-weight: 500;
-            background: linear-gradient(135deg, var(--c-dark), #2c5a57);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .modal-header p {
             margin: 0;
+            font-size: 1.2rem;
         }
 
-        .modal-close-btn {
-            background: #f1f3f5;
+        .modal-close {
+            background: none;
             border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.3rem;
-            color: #6c757d;
+            color: #1a1a1a;
+            font-size: 1.4rem;
             cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.25s ease;
+            transition: background 0.2s;
         }
 
-        .modal-close-btn:hover {
-            background: #e9ecef;
-            color: #333;
-            transform: scale(1.1);
+        .modal-close:hover {
+            background: rgba(255,255,255,0.2);
         }
 
-        .modal-info-box {
-            background: linear-gradient(135deg, #f8f9fa, #e9f5f2);
+        .modal-body {
             padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 24px;
-            border-left: 5px solid var(--c-dark);
-            box-shadow: 0 4px 15px rgba(28, 63, 58, 0.08);
-            max-height: 180px;
+            flex: 1;
             overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #a0c4c0 #f1f3f5;
+            -webkit-overflow-scrolling: touch;
+            color: black;
+            
         }
 
-        .modal-info-box::-webkit-scrollbar { width: 6px; }
-        .modal-info-box::-webkit-scrollbar-track { background: #f1f3f5; border-radius: 10px; }
-        .modal-info-box::-webkit-scrollbar-thumb { background: #a0c4c0; border-radius: 10px; }
-        .modal-info-box::-webkit-scrollbar-thumb:hover { background: #8ab0ac; }
-
-        .info-title-wrap {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .info-title-wrap i { color: var(--c-dark); font-size: 1.3rem; }
-        .info-title { margin: 0; font-size: 1.35rem; font-weight: 700; color: #1a3a36; }
-        .info-desc { margin: 0; color: #555; font-size: 1rem; line-height: 1.6; }
-
-        .form-group { margin-bottom: 20px; }
-        .form-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            font-weight: 700;
+        .material-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
             color: #1C3F3A;
-            font-size: 1.05rem;
+        }
+
+        .material-desc {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 12px 0 20px;
+            word-break: break-word;
+            max-height: 120px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #333;
         }
 
         .form-input {
             width: 100%;
-            padding: 16px 18px;
-            border: 2px solid #d1d9e0;
-            border-radius: 14px;
-            font-size: 1.05rem;
-            transition: all 0.3s ease;
-            background: #fafafa;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.2s, box-shadow 0.2s;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: var(--c-dark);
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(28, 63, 58, 0.15);
-            transform: translateY(-1px);
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
         }
 
-        .input-hint {
+        .note {
             display: block;
             margin-top: 8px;
-            font-size: 0.875rem;
-            color: #6c757d;
+            font-size: 0.8rem;
+            color: #777;
             font-style: italic;
         }
 
         .modal-footer {
-            margin: 24px -32px -32px;
-            padding: 20px 32px;
-            background: #f8f9fa;
-            border-top: 1px solid #dee2e6;
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-        }
-
-        .modal-buttons {
+            padding: 16px 20px;
             display: flex;
-            gap: 14px;
+            gap: 10px;
             justify-content: flex-end;
-            flex-wrap: nowrap;
+            border-top: 1px solid #eee;
+            flex-shrink: 0;
         }
 
         .btn {
-            padding: 13px 26px;
+            padding: 10px 16px;
             border: none;
-            border-radius: 14px;
-            font-weight: 700;
+            border-radius: 8px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.02rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 110px;
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--c-dark), #2c5a57);
-            color: #fff;
-            box-shadow: 0 6px 20px rgba(28, 63, 58, 0.3);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(28, 63, 58, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+            transition: all 0.2s;
+            font-size: 0.95rem;
         }
 
         .btn-secondary {
-            background: #e9ecef;
-            color: #495057;
-            border: 1px solid #ced4da;
+            background: #6c757d;
+            color: white;
         }
 
         .btn-secondary:hover {
-            background: #dee2e6;
-            transform: translateY(-1px);
+            background: #5a6268;
         }
 
-        @media (max-width: 480px) {
-            .modal-content { padding: 24px; border-radius: 20px; }
-            .modal-buttons { flex-direction: column; }
-            .btn { width: 100%; }
+        .btn-primary {
+            background: #1C3F3A;
+            color: white;
         }
 
-        /* VIRTUAL KEYBOARD */
-        #virtual-keyboard {
+        .btn-primary:hover {
+            background: #16332e;
+        }
+
+        /* === VIRTUAL KEYBOARD === */
+        .virtual-keyboard {
+            display: none;
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #2c2c2c;
-            padding: 10px 8px;
-            box-shadow: 0 -6px 25px rgba(0,0,0,0.3);
-            z-index: 110;
-            display: none;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: #1a1a1a;
+            padding: 12px 8px;
+            z-index: 10001;
+            border-top: 1px solid #333;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
         }
 
-        .keyboard-row {
+        .virtual-keyboard.show {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .virtual-keyboard .keyboard-row {
             display: flex;
             justify-content: center;
-            gap: 6px;
             margin-bottom: 8px;
+            gap: 6px;
         }
 
-        .keyboard-key {
-            min-width: 45px;
-            height: 50px;
-            background: #3a3a3a;
-            color: #f0f0f0;
+        .virtual-keyboard button {
+            flex: 1;
+            min-width: 40px;
+            max-width: 60px;
+            padding: 14px 8px;
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            color: #fff;
             border: none;
-            border-radius: 10px;
             font-size: 1rem;
-            font-weight: 400;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
+            transition: all 0.15s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .virtual-keyboard button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .virtual-keyboard button.wide { flex: 2; }
+
+        /* === LOADING & SUCCESS === */
+        .loading-modal, .success-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-            text-transform:lowercase;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .keyboard-key:hover {
-            background: #4a4a4a;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(0,0,0,0.35);
+        .loading-modal.show, .success-modal.show {
+            display: flex;
+            opacity: 1;
         }
 
-        .keyboard-key:active {
-            transform: translateY(0);
+        .loading-animation {
+            width: 80px; height: 80px;
+            animation: rotate 2s linear infinite;
         }
 
-        .keyboard-key[data-key="Enter"] {
-            background: #43a047;
-            color: white;
-            min-width: 70px;
+        .loading-animation svg {
+            width: 100%; height: 100%;
+            filter: drop-shadow(0 0 5px rgba(0, 123, 255, 0.5));
         }
 
-        .keyboard-key[data-key="CAPS"].caps-active {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-color: #bee5eb;
-        }
-
-        @media (max-width: 768px) {
-            .keyboard-key {
-                min-width: 38px;
-                height: 44px;
-                font-size: 0.9rem;
-            }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-    <!-- LOADING — HARFMA-HARF + SPINNER -->
+    <!-- LOADING -->
     <div id="loading">
         <div class="title-wrap" id="animated-title"></div>
         <div class="loading-spinner"></div>
@@ -591,7 +582,6 @@
     <!-- MAP -->
     <div class="map-container">
         <div id="map-wrapper">
-
             <a href="{{ route('welcome') }}" class="back-button"></a>
 
             <div class="controls">
@@ -601,13 +591,7 @@
             </div>
 
             <div id="map-inner">
-                <img
-                    id="map-image" 
-                    src="{{ asset('map/uzbekistan-map.png') }}?v={{ time() }}" 
-                    alt="Uzbekistan Map"
-                    loading="eager"
-                    crossorigin="anonymous"
-                >
+                <img id="map-image" src="{{ asset('map/uzbekistan-map.png') }}?v={{ time() }}" alt="Uzbekistan Map" loading="eager">
                 <div id="marker-container"></div>
             </div>
 
@@ -624,59 +608,68 @@
         </div>
     </div>
 
-    <!-- EMAIL MODAL -->
-    <div class="email-modal" id="email-modal">
-        <div class="modal-content">
+    <!-- EMAIL MODAL – EVENTS & LIBRARY BILAN BIR XIL -->
+    <div class="email-modal" id="emailModal">
+        <div class="modal-content modern-modal">
             <div class="modal-header">
-                <h2 class="modal-title">{{ __('messages.Send to email') }}</h2>
-                <button class="modal-close-btn" id="modal-close" aria-label="{{ __('messages.Close') }}">
-                    <i class="fas fa-times"></i>
-                </button>
+                <p><strong>{{ __('messages.Send the material to your email') }}</strong></p>
+                <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
             </div>
 
-            <div class="modal-info-box">
-                <div class="info-title-wrap">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <h3 id="modal-info-title" class="info-title"></h3>
+            <div class="modal-body">
+                <div class="material-info">
+                    <h3 id="modal-info-title"></h3>
+                    <p id="modal-info-description" class="material-desc"></p>
                 </div>
-                <p id="modal-info-description" class="info-desc"></p>
-            </div>
 
-            <div class="form-group">
-                <label class="form-label">
-                    {{ __('messages.📧 Your email address') }}
-                </label>
-                <input 
-                    type="email" 
-                    id="email-input" 
-                    class="form-input" 
-                    placeholder="example@gmail.com" 
-                    autocomplete="off"
-                    aria-label="{{ __('messages.Enter your email') }}"
-                >
-                <small class="input-hint">{{ __('messages.* We will also send you the latest news and useful materials to your email address.') }}</small>
+                <div class="form-group">
+                    <label for="emailInput">{{ __('messages.Your email address') }}</label>
+                    <input type="email" id="emailInput" class="form-input" placeholder="misol@gmail.com" required>
+                    <small class="note">
+                        {{ __('messages.* We will also send you the latest news and useful materials to your email address.') }}
+                    </small>
+                </div>
             </div>
 
             <div class="modal-footer">
-                <div class="modal-buttons">
-                    <button class="btn btn-secondary" id="cancel-btn">
-                        <i class="fas fa-ban"></i> {{ __('messages.Cancel') }}
-                    </button>
-                    <button class="btn btn-primary" id="send-btn">
-                        <i class="fas fa-paper-plane"></i> <span>{{ __('messages.Send to email') }}</span>
-                    </button>
-                </div>
+                <button class="btn btn-secondary" onclick="closeModal()">{{ __('messages.Cancel') }}</button>
+                <button class="btn btn-primary" onclick="sendEmail()">
+                    <i class="fas fa-paper-plane"></i> {{ __('messages.Send to email') }}
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- VIRTUAL KEYBOARD -->
-    <div id="virtual-keyboard"></div>
+    <!-- Virtual Keyboard -->
+    <div id="virtual-keyboard" class="virtual-keyboard"></div>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="modal-content modern-modal">
+            <div class="modal-body">
+                <p>{{ __('messages.Material sent successfully') }}</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeSuccessModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="loading-modal" id="loadingModal">
+        <div class="loading-animation">
+            <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="#007bff" stroke-width="6" stroke-dasharray="20,10"/>
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#ffd700" stroke-width="4" stroke-dasharray="15,10"/>
+                <circle cx="50" cy="50" r="20" fill="none" stroke="#ff4500" stroke-width="3" stroke-dasharray="10,10"/>
+            </svg>
+        </div>
+    </div>
 
 <script>
     // Inactivity redirect
     let inactivityTime = 0;
-    ['mousemove', 'click', 'scroll', 'keydown'].forEach(ev => 
+    ['mousemove', 'click', 'scroll', 'keydown', 'touchstart'].forEach(ev => 
         document.addEventListener(ev, () => inactivityTime = 0)
     );
     setInterval(() => {
@@ -685,9 +678,6 @@
         }
     }, 1000);
 
-    /* ============================================================= */
-    /* 1. GLOBAL VARIABLES                                          */
-    /* ============================================================= */
     const maps = @json($maps);
     const currentLang = '{{ $locale ?? "uz" }}';
 
@@ -707,15 +697,17 @@
         zoomOut: $('zoom-out'),
         reset: $('reset-view'),
         loading: $('loading'),
-        modal: $('email-modal'),
-        modalClose: $('modal-close'),
-        cancel: $('cancel-btn'),
-        send: $('send-btn'),
-        emailInp: $('email-input'),
+        modal: $('emailModal'),
+        modalClose: $('emailModal').querySelector('.modal-close'),
+        cancel: $('emailModal').querySelector('.btn-secondary'),
+        send: $('emailModal').querySelector('.btn-primary'),
+        emailInp: $('emailInput'),
         modalTitle: $('modal-info-title'),
         modalDesc: $('modal-info-description'),
         keyboard: $('virtual-keyboard'),
-        animatedTitle: $('animated-title')
+        animatedTitle: $('animated-title'),
+        loadingModal: $('loadingModal'),
+        successModal: $('successModal')
     };
 
     let scale = 1, minScale = 1, maxScale = 3;
@@ -724,104 +716,101 @@
     const ZOOM_STEP = 0.25;
     let imgW = 0, imgH = 0;
     let currentMap = null;
-    let capsLock = false;
+    let isUpperCase = false;
+    let keyboardShown = false;
 
-    const KB_LAYOUT = [
+    const keyboardLayout = [
         ['1','2','3','4','5','6','7','8','9','0','-','_','←'],
         ['q','w','e','r','t','y','u','i','o','p','@'],
-        ['a','s','d','f','g','h','j','k','l','.'],
-        ['CAPS','z','x','c','v','b','n','m','CAPS'],
+        ['a','s','d','f','g','h','j','k','l','.','!','?'],
+        ['CAPS','z','x','c','v','b','n','m',':',';','CAPS'],
     ];
 
-    /* ============================================================= */
-    /* 2. HARFMA-HARF ANIMATSIYA                                   */
-    /* ============================================================= */
+    function showKeyboard() {
+        if (keyboardShown) return;
+        const keyboard = document.getElementById('virtual-keyboard');
+        keyboard.classList.add('show');
+        document.body.classList.add('keyboard-active');
+        renderKeyboard();
+        keyboardShown = true;
+    }
+
+    function hideKeyboard() {
+        if (!keyboardShown) return;
+        const keyboard = document.getElementById('virtual-keyboard');
+        keyboard.classList.remove('show');
+        document.body.classList.remove('keyboard-active');
+        keyboardShown = false;
+    }
+
+    function renderKeyboard() {
+        const keyboard = document.getElementById('virtual-keyboard');
+        keyboard.innerHTML = '';
+
+        keyboardLayout.forEach(row => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'keyboard-row';
+
+            row.forEach(key => {
+                const btn = document.createElement('button');
+                let displayKey = key;
+
+                if (isUpperCase && key.length === 1 && !['@','!','?','.'].includes(key)) {
+                    displayKey = key.toUpperCase();
+                }
+                if (key === '←') displayKey = '←';
+                if (key === 'CAPS') displayKey = 'CAPS';
+
+                btn.textContent = displayKey;
+                btn.onclick = () => handleKeyPress(key);
+
+                if (['CAPS', '←'].includes(key)) {
+                    btn.className = 'special';
+                    if (key === '←') btn.className += ' wide';
+                }
+
+                rowDiv.appendChild(btn);
+            });
+
+            keyboard.appendChild(rowDiv);
+        });
+    }
+
+    function handleKeyPress(key) {
+        const input = document.getElementById('emailInput');
+        switch (key) {
+            case '←':
+                input.value = input.value.slice(0, -1);
+                break;
+            case 'Enter':
+                sendEmail();
+                break;
+            case 'CAPS':
+                isUpperCase = !isUpperCase;
+                renderKeyboard();
+                break;
+            default:
+                input.value += isUpperCase ? key.toUpperCase() : key;
+                break;
+        }
+        input.focus();
+    }
+
     function startLetterAnimation() {
         const text = "{{ __('messages.Uzbekistan Travel') }}";
         const titleEl = els.animatedTitle;
         titleEl.textContent = '';
         titleEl.style.opacity = '1';
-
         let i = 0;
         const interval = setInterval(() => {
             if (i < text.length) {
-                titleEl.textContent += text[i];
-                i++;
+                titleEl.textContent += text[i++];
             } else {
                 clearInterval(interval);
             }
-        }, 120); // Harf orasi 120ms — sekin, jiddiy
+        }, 120);
     }
 
-    /* ============================================================= */
-    /* 3. KEYBOARD                                                 */
-    /* ============================================================= */
-    function renderKB() {
-        els.keyboard.innerHTML = '';
-        KB_LAYOUT.forEach(row => {
-            const r = document.createElement('div');
-            r.className = 'keyboard-row';
-            row.forEach(k => {
-                const b = document.createElement('button');
-                b.className = 'keyboard-key';
-                if (['←','CAPS','Enter',' '].includes(k)) b.classList.add('special');
-
-                // Harflarni faqat CAPS bosilganda katta qilish
-                if (k.length === 1 && /[a-z]/.test(k)) {
-                    b.textContent = capsLock ? k.toUpperCase() : k;
-                } else {
-                    b.textContent = k === ' ' ? '' : k;
-                }
-
-                b.dataset.key = k;
-                if (k === 'CAPS') {
-                    b.classList.toggle('caps-active', capsLock);
-                    b.textContent = 'CAPS';
-                }
-                if (k === ' ') b.innerHTML = '&nbsp;';
-                b.onclick = () => kbPress(k);
-                r.appendChild(b);
-            });
-            els.keyboard.appendChild(r);
-        });
-    }
-
-    function kbPress(k) {
-        if (k === 'CAPS') {
-            capsLock = !capsLock;
-            renderKB();
-            return;
-        }
-        if (k === '←') {
-            els.emailInp.value = els.emailInp.value.slice(0, -1);
-        } else if (k === 'Enter') {
-            sendEmail();
-        } else if (k !== ' ') {
-            // Harflarni faqat CAPS bosilganda katta kiritish
-            if (k.length === 1 && /[a-z]/.test(k)) {
-                els.emailInp.value += capsLock ? k.toUpperCase() : k;
-            } else {
-                els.emailInp.value += k;
-            }
-        }
-        els.emailInp.focus();
-    }
-
-    function showKB() {
-        els.keyboard.style.display = 'block';
-        renderKB();
-        els.modal.style.transform = 'translateY(-110px)';
-        els.modal.style.transition = 'transform 0.3s ease';
-    }
-
-    function hideKB() {
-        els.keyboard.style.display = 'none';
-        els.modal.style.transform = 'translateY(0)';
-    }
-
-    /* ============================================================= */
-    /* 4. CLAMP — TO'LIQ TO'G'RI                                   */
-    /* ============================================================= */
     function clamp() {
         const wrapperW = els.wrapper.clientWidth;
         const wrapperH = els.wrapper.clientHeight;
@@ -830,69 +819,49 @@
 
         if (scaledW > wrapperW) {
             const maxTx = (scaledW - wrapperW) / (2 * scale);
-            const minTx = -maxTx;
-            tx = Math.max(minTx, Math.min(maxTx, tx));
-        } else {
-            tx = 0;
-        }
+            tx = Math.max(-maxTx, Math.min(maxTx, tx));
+        } else tx = 0;
 
         if (scaledH > wrapperH) {
             const maxTy = (scaledH - wrapperH) / (2 * scale);
-            const minTy = -maxTy;
-            ty = Math.max(minTy, Math.min(maxTy, ty));
-        } else {
-            ty = 0;
-        }
+            ty = Math.max(-maxTy, Math.min(maxTy, ty));
+        } else ty = 0;
     }
 
-    /* ============================================================= */
-    /* 5. MARKER ADJUST                                            */
-    /* ============================================================= */
     function adjustMarkers() {
         const wrapperW = els.wrapper.clientWidth;
         const wrapperH = els.wrapper.clientHeight;
         const scaledW = imgW * scale;
         const scaledH = imgH * scale;
-
         const offsetX = scaledW > wrapperW ? 0 : (wrapperW - scaledW) / 2 / scale;
         const offsetY = scaledH > wrapperH ? 0 : (wrapperH - scaledH) / 2 / scale;
 
         document.querySelectorAll('.marker').forEach(m => {
             const d = maps.find(x => x.id == m.dataset.id);
             if (!d) return;
-
             const px = (d.longitude / 100) * imgW + offsetX;
             const py = (d.latitude / 100) * imgH + offsetY;
-
             m.style.left = `${(px / imgW) * 100}%`;
             m.style.top = `${(py / imgH) * 100}%`;
         });
     }
 
-    /* ============================================================= */
-    /* 6. TRANSFORM                                                */
-    /* ============================================================= */
     function applyTransform() {
         els.mapInner.style.transition = isPanning ? 'none' : 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
         els.mapInner.style.transform = `scale(${scale}) translate(${tx}px, ${ty}px)`;
     }
 
-    /* ============================================================= */
-    /* 7. MAP INITIALISATION                                        */
-    /* ============================================================= */
     function initMap() {
         const rect = els.wrapper.getBoundingClientRect();
         imgW = els.mapImg.naturalWidth;
         imgH = els.mapImg.naturalHeight;
-
         if (!imgW || !imgH) return showImageError();
 
         const fitW = rect.width / imgW;
         const fitH = rect.height / imgH;
         scale = Math.min(fitW, fitH) * 2;
         minScale = scale;
-
-        tx = 0; ty = 0;
+        tx = ty = 0;
         createMarkers();
         clamp();
         adjustMarkers();
@@ -911,18 +880,8 @@
         });
     }
 
-    /* ============================================================= */
-    /* 8. ZOOM & RESET                                             */
-    /* ============================================================= */
-    function zoomIn() {
-        scale = Math.min(maxScale, scale + ZOOM_STEP);
-        clamp(); adjustMarkers(); applyTransform();
-    }
-
-    function zoomOut() {
-        scale = Math.max(minScale, scale - ZOOM_STEP);
-        clamp(); adjustMarkers(); applyTransform();
-    }
+    function zoomIn() { scale = Math.min(maxScale, scale + ZOOM_STEP); clamp(); adjustMarkers(); applyTransform(); }
+    function zoomOut() { scale = Math.max(minScale, scale - ZOOM_STEP); clamp(); adjustMarkers(); applyTransform(); }
 
     function resetView() {
         const r = els.wrapper.getBoundingClientRect();
@@ -935,9 +894,6 @@
         clamp(); adjustMarkers(); applyTransform();
     }
 
-    /* ============================================================= */
-    /* 9. MARKER → INFO PANEL                                      */
-    /* ============================================================= */
     function showCarousel(url) {
         els.carousel.innerHTML = '';
         if (!url) {
@@ -956,7 +912,6 @@
         document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
         el.classList.add('active');
         currentMap = data;
-
         els.title.textContent = data.name;
         els.desc.textContent = data.description || '{{ __('messages.No description.') }}';
         showCarousel(data.image_url);
@@ -977,22 +932,41 @@
         clamp(); adjustMarkers(); applyTransform();
     }
 
-    /* ============================================================= */
-    /* 10. EMAIL MODAL                                             */
-    /* ============================================================= */
     function openModal() {
         if (!currentMap) return alert('{{ __('messages.Select a location first!') }}');
         els.modalTitle.textContent = currentMap.name;
         els.modalDesc.textContent = currentMap.description;
         els.emailInp.value = '';
-        els.modal.classList.add('active');
-        setTimeout(() => els.emailInp.focus(), 150);
+        els.modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        hideKeyboard();
     }
 
     function closeModal() {
-        els.modal.classList.remove('active');
-        hideKB();
+        els.modal.classList.remove('show');
+        document.body.style.overflow = 'auto';
         els.emailInp.value = '';
+        hideKeyboard();
+    }
+
+    function showLoading() {
+        els.loadingModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hideLoading() {
+        els.loadingModal.classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+
+    function openSuccessModal() {
+        els.successModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSuccessModal() {
+        els.successModal.classList.remove('show');
+        document.body.style.overflow = 'auto';
     }
 
     async function sendEmail() {
@@ -1002,8 +976,8 @@
             return;
         }
 
-        els.send.disabled = true;
-        els.send.innerHTML = '<i class="fas fa-spinner fa-spin"></i> {{ __('messages.Sending…') }}';
+        closeModal();
+        showLoading();
 
         try {
             const r = await fetch('{{ route("send.map.email") }}', {
@@ -1015,19 +989,20 @@
                 body: JSON.stringify({ email: mail, map_id: currentMap.id, lang: currentLang })
             });
             const j = await r.json();
-            alert(j.success ? (j.message || '{{ __('messages.Send!') }}') : '{{ __('messages.Error') }}: ' + (j.error || 'unknown'));
-            if (j.success) closeModal();
+
+            hideLoading();
+
+            if (j.success) {
+                openSuccessModal();
+            } else {
+                alert('{{ __('messages.Error') }}: ' + (j.error || 'unknown'));
+            }
         } catch {
+            hideLoading();
             alert('{{ __('messages.Network error!') }}');
-        } finally {
-            els.send.disabled = false;
-            els.send.innerHTML = '<i class="fas fa-paper-plane"></i> {{ __('messages.Send') }}';
         }
     }
 
-    /* ============================================================= */
-    /* 11. IMAGE LOAD — 100% ISHONCHLI                             */
-    /* ============================================================= */
     function showImageError() {
         els.loading.innerHTML = `
             <div style="color:#fff;text-align:center;padding:20px;">
@@ -1041,13 +1016,20 @@
         `;
     }
 
+    function hideLoadingAndInit() {
+        const loading = els.loading;
+        loading.style.transition = 'opacity 0.8s ease';
+        loading.style.opacity = '0';
+        setTimeout(() => {
+            loading.style.display = 'none';
+            initMap();
+        }, 800);
+    }
+
     function startAppWhenReady() {
         const img = els.mapImg;
-
-        // Harf animatsiyasini boshlash
         startLetterAnimation();
 
-        // Rasim yuklanishini kutish
         if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
             setTimeout(hideLoadingAndInit, 800);
             return;
@@ -1065,30 +1047,10 @@
             }
         }, 100);
 
-        img.onload = () => {
-            clearInterval(check);
-            setTimeout(hideLoadingAndInit, 800);
-        };
-
-        img.onerror = () => {
-            clearInterval(check);
-            showImageError();
-        };
+        img.onload = () => { clearInterval(check); setTimeout(hideLoadingAndInit, 800); };
+        img.onerror = () => { clearInterval(check); showImageError(); };
     }
 
-    function hideLoadingAndInit() {
-        const loading = els.loading;
-        loading.style.transition = 'opacity 0.8s ease';
-        loading.style.opacity = '0';
-        setTimeout(() => {
-            loading.style.display = 'none';
-            initMap();
-        }, 800);
-    }
-
-    /* ============================================================= */
-    /* 12. EVENT LISTENERS                                          */
-    /* ============================================================= */
     function bindEvents() {
         els.zoomIn.onclick = zoomIn;
         els.zoomOut.onclick = zoomOut;
@@ -1098,28 +1060,24 @@
         els.modalClose.onclick = closeModal;
         els.cancel.onclick = closeModal;
         els.send.onclick = sendEmail;
-        els.emailInp.onfocus = () => {
-            showKB();
-            setTimeout(() => els.emailInp.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-        };
-        els.emailInp.onkeydown = e => e.key === 'Enter' && sendEmail();
-        els.modal.onclick = e => e.target === els.modal && closeModal();
 
+        els.emailInp.addEventListener('focus', showKeyboard);
+        document.getElementById('virtual-keyboard').addEventListener('mousedown', e => e.preventDefault());
+
+        els.modal.onclick = e => e.target === els.modal && closeModal();
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
-                if (els.modal.classList.contains('active')) closeModal();
-                else if (els.infoPanel.classList.contains('active')) resetView();
+                if (els.successModal.classList.contains('show')) closeSuccessModal();
+                else if (els.modal.classList.contains('show')) closeModal();
             }
         });
 
-        // Wheel
         els.wrapper.addEventListener('wheel', e => {
             e.preventDefault();
             scale = Math.max(minScale, Math.min(maxScale, scale + (e.deltaY < 0 ? 1 : -1) * ZOOM_STEP));
             clamp(); adjustMarkers(); applyTransform();
         }, { passive: false });
 
-        // Mouse Pan
         const mouse = {
             down: e => {
                 if (e.target.closest('.marker')) return;
@@ -1136,16 +1094,12 @@
                 clamp();
                 requestAnimationFrame(() => { applyTransform(); adjustMarkers(); });
             },
-            up: () => {
-                isPanning = false;
-                els.wrapper.style.cursor = 'grab';
-            }
+            up: () => { isPanning = false; els.wrapper.style.cursor = 'grab'; }
         };
         ['mousedown', 'mousemove', 'mouseup', 'mouseleave'].forEach((ev, i) => 
             els.wrapper.addEventListener(ev, mouse[['down','move','up','up'][i]])
         );
 
-        // Touch
         els.wrapper.addEventListener('touchstart', e => {
             if (e.touches.length !== 1) return;
             isPanning = true;
@@ -1162,7 +1116,6 @@
         }, { passive: false });
         els.wrapper.addEventListener('touchend', () => isPanning = false);
 
-        // Click outside
         els.wrapper.onclick = e => {
             if (e.target.closest('.marker,.marker-info,.controls')) return;
             els.infoPanel.classList.remove('active');
@@ -1170,14 +1123,9 @@
             document.querySelectorAll('.marker').forEach(m => m.classList.remove('active'));
         };
 
-        window.addEventListener('resize', () => {
-            clamp(); adjustMarkers(); applyTransform();
-        });
+        window.addEventListener('resize', () => { clamp(); adjustMarkers(); applyTransform(); });
     }
 
-    /* ============================================================= */
-    /* 13. INIT                                                    */
-    /* ============================================================= */
     function init() {
         bindEvents();
         startAppWhenReady();

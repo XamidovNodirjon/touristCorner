@@ -11,39 +11,37 @@
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ asset('logo/logo2.png') }}">
+    <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/library.css') }}">
     <link rel="stylesheet" href="{{ asset('css/events.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
 
     <style>
-        
         body {
             background-image: url("{{ asset('fon/fon.png') }}");
             background-repeat: no-repeat;
             background-size: cover;
-            background-attachment: fixed; /* Sahifani aylantirganda (scroll) rasm joyida turishi uchun */
-            padding-top: 80px; /* Headerning qotirilishini hisobga olib, bodyga padding berish */
-        }
-        /* Headerni qadash uchun stil */
-        .header-bar {
-            background-color: #1C3F3A;
-            border-bottom: 1px solid #EBE9DA;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
+            background-attachment: fixed;
+            padding-top: 80px;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            transition: none;
         }
 
-        /* Scroll-to-Top Button Stili (PASTKI O'NG UCHUN TASDIQLANDI) */
+        .header-bar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #1C3F3A;
+        }
+
         .scroll-to-top-btn {
             display: none;
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 30px; right: 30px;
             z-index: 999;
             border: none;
-            outline: none;
             background-color: #1C3F3A;
             color: white;
             cursor: pointer;
@@ -51,7 +49,7 @@
             border-radius: 50%;
             font-size: 18px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            transition: background-color 0.3s, opacity 0.3s;
+            transition: all 0.3s;
             opacity: 0.8;
         }
 
@@ -60,15 +58,11 @@
             opacity: 1;
         }
 
-        /* Bodyga padding qo'shish (fixed header uchun) */
-        body {
-            padding-top: 80px;
-        }
-
-        /* Category buttons */
         .category-bar {
             display: flex;
             flex-wrap: wrap;
+            gap: 8px;
+            margin: 25px 0;
             justify-content: center;
         }
 
@@ -83,132 +77,279 @@
             cursor: pointer;
         }
 
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-
-        .card {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            background: #fff;
-            margin-top: 20px;
-        }
-
-        .card:not(:first-child) {
-            margin-top: 24px;
-        }
-
-        .card img.card-image {
-            width: 100%;
-            height: 220px;
-            object-fit: contain;
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #eee;
-        }
-
-
-        .category-button:hover {
-            background: #007bff;
-            color: #fff;
-            border-color: #007bff;
-        }
-
+        .category-button:hover,
         .category-button.active {
             background: #007bff;
             color: #fff;
             border-color: #007bff;
         }
 
-        /* Loading Animation Modal */
+        .left-logo img {
+            max-width: 130px;
+            height: auto;
+        }
+
+        /* === MODAL – Professional, moslashuvchan siljish === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modern-modal {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 420px;
+            max-height: 85vh;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalPop 0.3s ease-out;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.9) translateY(0); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* Klaviatura chiqqanda – modalni yuqoriga siljitish */
+        .keyboard-active .modern-modal {
+            transform: translateY(calc(-0% - 100px)) !important;
+        }
+
+        @media (max-height: 700px) {
+            .keyboard-active .modern-modal {
+                transform: translateY(calc(-50% - 80px)) !important;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .keyboard-active .modern-modal {
+                transform: translateY(calc(-50% - 60px)) !important;
+            }
+        }
+
+        .modal-header {
+            padding: 18px 20px;
+            color: black;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .modal-header p, .modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #1a1a1a;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .modal-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #modalMaterialDescription {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 12px 0 20px;
+            word-break: break-word;
+            max-height: 120px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+        }
+
+        .note {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #777;
+            font-style: italic;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            border-top: 1px solid #eee;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-primary {
+            background: #1C3F3A;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #16332e;
+        }
+
+        /* === VIRTUAL KEYBOARD === */
+        .virtual-keyboard {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #1a1a1a;
+            padding: 12px 8px;
+            z-index: 10001;
+            border-top: 1px solid #333;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+        }
+
+        .virtual-keyboard.show {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .virtual-keyboard .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+            gap: 6px;
+        }
+
+        .virtual-keyboard button {
+            flex: 1;
+            min-width: 40px;
+            max-width: 60px;
+            padding: 14px 8px;
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            color: #fff;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .virtual-keyboard button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .virtual-keyboard button.wide { flex: 2; }
+
+        /* === LOADING MODAL === */
         .loading-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
+            z-index: 10000;
             align-items: center;
             justify-content: center;
         }
 
         .loading-animation {
-            width: 80px;
-            height: 80px;
-            position: relative;
+            width: 80px; height: 80px;
             animation: rotate 2s linear infinite;
         }
 
         .loading-animation svg {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             filter: drop-shadow(0 0 5px rgba(0, 123, 255, 0.5));
         }
 
-        .loading-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #fff;
-            font-size: 14px;
-            font-weight: 500;
-            text-align: center;
-        }
-
         @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        .loading-modal.show {
-            display: flex;
-        }
-
-        .left-logo img {
-            max-width: 130px;
-            height: auto;
-            display: block;
-        }
-
-        /* YANGI: Virtual Keyboard stili */
-        #virtual-keyboard {
-            display: none; 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: #222; 
-            padding: -20px; 
-            z-index: 9999; 
-            text-align: center; 
-            border-top: 3px solid #444; 
-            user-select: none;
-        }
-        /* Email Modal stili */
-        .modal-content {
-            /* Hozirgi stillar: (background, border-radius, etc.) */
-            position: relative !important; 
-            /* Agar modal vertikal centrda bo'lsa, quyidagini qo'shamiz: */
-            transition: transform 0.3s ease-out; /* Silliq ko'tarilish uchun */
-        }
-
-        /* Yangi stil: klaviatura chiqishi uchun modalni surish */
-        .modal-content.keyboard-active {
-            /* 250px bu klaviaturaning taxminiy balandligi. 
-            Buni kamroq yoki ko'proq qilib sinab ko'rishingiz mumkin. */
-            transform: translateY(-150px); 
-            /* Agar modal mutlaq centrda bo'lmasa, transform: translateY(0) ishlashi ham mumkin,
-            ammo bu yechim centrda bo'lgan holat uchun universalroq. */
-        }
+        .loading-modal.show { display: flex; }
     </style>
 </head>
 
@@ -216,10 +357,10 @@
 <header class="header-bar">
     <div class="header-left">
         <a href="{{route('welcome')}}">
-                <div class="left-logo">
-                    <img src="{{asset('/logo/logo.png')}}" alt="Logo">
-                </div>
-            </a>
+            <div class="left-logo">
+                <img src="{{asset('/logo/logo.png')}}" alt="Logo">
+            </div>
+        </a>
     </div>
 
     <div class="header-right">
@@ -231,38 +372,23 @@
         </nav>
 
         @php
-            $currentLocale = session('locale', 'en'); // Default — uz
-            $flags = [
-                'uz' => 'https://flagcdn.com/w40/uz.png',
-                'en' => 'https://flagcdn.com/w40/gb.png',
-                'ru' => 'https://flagcdn.com/w40/ru.png',
-            ];
-            $langLabels = [
-                'uz' => 'UZ',
-                'en' => 'EN',
-                'ru' => 'RU',
-            ];
+            $currentLocale = session('locale', 'en');
+            $flags = ['uz' => 'https://flagcdn.com/w40/uz.png', 'en' => 'https://flagcdn.com/w40/gb.png', 'ru' => 'https://flagcdn.com/w40/ru.png'];
+            $langLabels = ['uz' => 'UZ', 'en' => 'EN', 'ru' => 'RU'];
         @endphp
 
         <div class="language-switcher">
-            <div class="lang-select" id="lang-select-btn" aria-label="Language selector">
+            <div class="lang-select" id="lang-select-btn">
                 <img src="{{ $flags[$currentLocale] }}" alt="Flag" class="flag" id="selected-flag">
                 <span id="selected-lang-text">{{ $langLabels[$currentLocale] }}</span>
                 <i class="fa-solid fa-chevron-down"></i>
             </div>
             <ul class="lang-dropdown" id="lang-dropdown">
-                <li data-lang="uz" data-flag="{{ $flags['uz'] }}">
-                    <img src="{{ $flags['uz'] }}" alt="Uzbek Flag" class="flag"> O'zbekcha
-                </li>
-                <li data-lang="en" data-flag="{{ $flags['en'] }}">
-                    <img src="{{ $flags['en'] }}" alt="UK Flag" class="flag"> English
-                </li>
-                <li data-lang="ru" data-flag="{{ $flags['ru'] }}">
-                    <img src="{{ $flags['ru'] }}" alt="Russia Flag" class="flag"> Русский
-                </li>
+                <li data-lang="uz" data-flag="{{ $flags['uz'] }}"><img src="{{ $flags['uz'] }}" alt="Uzbek Flag" class="flag"> O'zbekcha</li>
+                <li data-lang="en" data-flag="{{ $flags['en'] }}"><img src="{{ $flags['en'] }}" alt="UK Flag" class="flag"> English</li>
+                <li data-lang="ru" data-flag="{{ $flags['ru'] }}"><img src="{{ $flags['ru'] }}" alt="Russia Flag" class="flag"> Русский</li>
             </ul>
         </div>
-
     </div>
 </header>
 
@@ -273,7 +399,6 @@
                     onclick="window.location='{{ route('events.index') }}'">
                 {{ __('messages.All') }}
             </button>
-
             @foreach($categories as $category)
                 <button class="category-button {{ request()->is('events/category/'.$category->id) ? 'active' : '' }}"
                         onclick="window.location='{{ route('events.filter', $category->id) }}'">
@@ -281,108 +406,112 @@
                 </button>
             @endforeach
         </div>
-    </div>
 
-    @if($events->isNotEmpty())
-        <div class="row">
-            @foreach($events as $event)
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <img src="{{ asset('storage/' . $event->image) }}"
-                             alt="{{ $event->title_uz }}"
-                             class="card-image"
-                             onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80'">
-                        <div class="card-content">
-                            <div class="tag-container">
-                                <span class="tag {{ $event->category->slug ?? 'default' }}">{{ $event->category->name ?? 'Tadbir' }}</span>
-                                <span class="price">
-                                    {!! $event->price > 0
-                                        ? 'UZS ' . number_format($event->price, 0, '.', ' ') 
-                                        : '<i class="fa fa-ticket"></i> Free' !!}
-                                </span>
-                            </div>
-                            <h5 class="card-title">{{ $event->title }}</h5>
-                            <p class="card-description">{{ Str::limit($event->description, 80) }}</p>
-
-                            <div class="card-details">
-                                <div class="detail-item">
-                                    <i class="far fa-calendar-alt"></i>
-                                   <span>
-                                        @if($event->start_date && $event->end_date)
-                                            {{ \Carbon\Carbon::parse($event->start_date)->format('Y-m-d') }}
-                                            –
-                                            {{ \Carbon\Carbon::parse($event->end_date)->format('Y-m-d') }}
-                                        @elseif($event->start_date)
-                                            {{ \Carbon\Carbon::parse($event->start_date)->format('Y-m-d') }}
-                                        @elseif($event->end_date)
-                                            {{ \Carbon\Carbon::parse($event->end_date)->format('Y-m-d') }}
-                                        @else
-                                            <em>Sana ko‘rsatilmagan</em>
-                                        @endif
+        @if($events->isNotEmpty())
+            <div class="row">
+                @foreach($events as $event)
+                    @php $locale = app()->getLocale(); @endphp
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <img src="{{ asset('storage/' . $event->image) }}"
+                                 alt="{{ $event->{'title_' . $locale} }}"
+                                 class="card-image"
+                                 onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80'">
+                            <div class="card-content">
+                                <div class="tag-container">
+                                    <span class="tag {{ $event->category->slug ?? 'default' }}">{{ $event->category->name ?? 'Tadbir' }}</span>
+                                    <span class="price">
+                                        {!! $event->price > 0
+                                            ? 'UZS ' . number_format($event->price, 0, '.', ' ')
+                                            : '<i class="fa fa-ticket"></i> Free' !!}
                                     </span>
                                 </div>
-                                <div class="detail-item">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>{{ $event->location }}</span>
+                                <h5 class="card-title">{{ $event->{'title_' . $locale} }}</h5>
+                                <p class="card-description">{{ Str::limit($event->{'description_' . $locale}, 80) }}</p>
+
+                                <div class="card-details">
+                                    <div class="detail-item">
+                                        <i class="far fa-calendar-alt"></i>
+                                        <span>
+                                            @if($event->start_date && $event->end_date)
+                                                {{ \Carbon\Carbon::parse($event->start_date)->format('Y-m-d') }} – {{ \Carbon\Carbon::parse($event->end_date)->format('Y-m-d') }}
+                                            @elseif($event->start_date)
+                                                {{ \Carbon\Carbon::parse($event->start_date)->format('Y-m-d') }}
+                                            @else
+                                                <em>Sana ko‘rsatilmagan</em>
+                                            @endif
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ $event->location }}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <button class="card-button"
-                                onclick="openEmailModal(
+                                <button class="card-button"
+                                        onclick="openEmailModal(
                                             '{{ $event->id }}',
-                                            '{{ $event->title }}',
-                                            '{{ $event->date }}',
-                                            '{{ $event->location }}',
-                                            '{{ $event->description }}',
-                                            '{{ $event->image }}',
+                                            '{{ addslashes($event->{'title_' . $locale}) }}',
+                                            '{{ addslashes($event->{'description_' . $locale}) }}'
                                         )">
-                                <i class="fas fa-envelope"></i> {{ __('messages.Send Details') }}
-                            </button>
+                                    <i class="fas fa-envelope"></i> {{ __('messages.Send to email') }}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
-        </div>
-    @else
-        <p class="text-muted">{{ __('messages.No events found.') }}</p>
-    @endif
+                @endforeach
+            </div>
+        @else
+            <p class="text-muted text-center">{{ __('messages.No events found.') }}</p>
+        @endif
+    </div>
 </main>
 
 <button onclick="scrollToTop()" id="scrollToTopBtn" title="Yuqoriga" class="scroll-to-top-btn">
     <i class="fas fa-chevron-up"></i>
 </button>
 
+<!-- Email Modal -->
 <div class="modal" id="emailModal">
-    <div class="modal-content">
+    <div class="modal-content modern-modal">
         <div class="modal-header">
             <p><strong>{{ __('messages.Send event details via email') }}</strong></p>
             <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
         </div>
+
         <div class="modal-body">
             <p><strong>{{ __('messages.Event Name:') }}</strong> <span id="modalMaterialName"></span></p>
-            <br>
-            <p><strong>{{ __('messages.Description:') }}</strong> <span id="modalMaterialDescription"></span></p>
-            <br>
-            <div class="form-group mb-4">
-                <label for="emailInput" class="mb-2"><strong>{{ __('messages.Email Address') }}</strong></label>
-                <input type="email" id="emailInput" class="form-input" placeholder=".email@example.com" onclick="showKeyboard()" require>
-                <div id="virtual-keyboard" style="display:none;"></div>
+            <p id="modalMaterialDescription"></p>
+
+            <div class="form-group">
+                <label for="emailInput">{{ __('messages.Your email address') }}</label>
+                <input type="email" id="emailInput" class="form-input" placeholder="excample@gmail.com" required>
+                <small class="note">
+                    {{ __('messages.* We will also send you the latest news and useful materials to your email address.') }}
+                </small>
             </div>
         </div>
+
         <div class="modal-footer">
             <button class="btn btn-secondary" onclick="closeModal()">{{ __('messages.Cancel') }}</button>
-            <button class="btn btn-primary" onclick="sendEmail()"><i class="fas fa-paper-plane"></i> {{ __('messages.Send to email') }}</button>
+            <button class="btn btn-primary" onclick="sendEmail()">
+                <i class="fas fa-paper-plane"></i> {{ __('messages.Send to email') }}
+            </button>
         </div>
     </div>
 </div>
 
+<!-- Virtual Keyboard -->
+<div id="virtual-keyboard" class="virtual-keyboard"></div>
+
+<!-- Success Modal -->
 <div class="modal" id="successModal">
-    <div class="modal-content success-modal">
+    <div class="modal-content modern-modal">
         <div class="modal-header">
-            <h3><i class="fas fa-check-circle text-success"></i> {{ __('messages.Success')}}!</h3>
+            <h3>{{__('messages.Success')}}</h3>
             <button class="modal-close" onclick="closeSuccessModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <p>{{ __('messages.Material sent successfully')}}✅</p>
+            <p>{{__('messages.Material sent successfully')}}</p>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" onclick="closeSuccessModal()">OK</button>
@@ -390,6 +519,7 @@
     </div>
 </div>
 
+<!-- Loading Modal -->
 <div class="loading-modal" id="loadingModal">
     <div class="loading-animation">
         <svg viewBox="0 0 100 100">
@@ -397,25 +527,35 @@
             <circle cx="50" cy="50" r="30" fill="none" stroke="#ffd700" stroke-width="4" stroke-dasharray="15,10"/>
             <circle cx="50" cy="50" r="20" fill="none" stroke="#ff4500" stroke-width="3" stroke-dasharray="10,10"/>
         </svg>
-        
     </div>
 </div>
+
 <script>
-    // === Virtual Keyboard Logic ===
-    let isUpperCase = false; // katta/kichik holat
+    // === Virtual Keyboard ===
+    let isUpperCase = false;
+    let keyboardShown = false;
     const keyboardLayout = [
-    ['1','2','3','4','5','6','7','8','9','0','-','_','←'],
-    ['q','w','e','r','t','y','u','i','o','p','@'],
-    ['a','s','d','f','g','h','j','k','l','.','!','?'],
-    ['CAPS','z','x','c','v','b','n','m',':',';','CAPS'],
-    // ['Enter','CLOSE']
+        ['1','2','3','4','5','6','7','8','9','0','-','_','←'],
+        ['q','w','e','r','t','y','u','i','o','p','@'],
+        ['a','s','d','f','g','h','j','k','l','.','!','?'],
+        ['CAPS','z','x','c','v','b','n','m',':',';','CAPS'],
     ];
 
     function showKeyboard() {
+        if (keyboardShown) return;
         const keyboard = document.getElementById('virtual-keyboard');
-        keyboard.style.display = 'block';
-        keyboard.innerHTML = '';
+        keyboard.classList.add('show');
+        document.body.classList.add('keyboard-active');
         renderKeyboard();
+        keyboardShown = true;
+    }
+
+    function hideKeyboard() {
+        if (!keyboardShown) return;
+        const keyboard = document.getElementById('virtual-keyboard');
+        keyboard.classList.remove('show');
+        document.body.classList.remove('keyboard-active');
+        keyboardShown = false;
     }
 
     function renderKeyboard() {
@@ -424,25 +564,27 @@
 
         keyboardLayout.forEach(row => {
             const rowDiv = document.createElement('div');
-            rowDiv.style.marginBottom = '8px';
+            rowDiv.className = 'keyboard-row';
 
             row.forEach(key => {
-            const btn = document.createElement('button');
-            btn.textContent = isUpperCase && key.length === 1 ? key.toUpperCase() : key;
-            btn.style = `
-                margin:3px; 
-                padding:12px 16px;
-                font-size:18px;
-                border:none;
-                border-radius:6px; 
-                background:#444; 
-                color:white; 
-                cursor:pointer;
-                min-width:50px;
-            `;
+                const btn = document.createElement('button');
+                let displayKey = key;
 
-            btn.onclick = () => handleKeyPress(key);
-            rowDiv.appendChild(btn);
+                if (isUpperCase && key.length === 1 && !['@','!','?','.'].includes(key)) {
+                    displayKey = key.toUpperCase();
+                }
+                if (key === '←') displayKey = '←';
+                if (key === 'CAPS') displayKey = 'CAPS';
+
+                btn.textContent = displayKey;
+                btn.onclick = () => handleKeyPress(key);
+
+                if (['CAPS', '←'].includes(key)) {
+                    btn.className = 'special';
+                    if (key === '←') btn.className += ' wide';
+                }
+
+                rowDiv.appendChild(btn);
             });
 
             keyboard.appendChild(rowDiv);
@@ -451,37 +593,26 @@
 
     function handleKeyPress(key) {
         const input = document.getElementById('emailInput');
-
         switch (key) {
             case '←':
-            input.value = input.value.slice(0, -1);
-            break;
-            case 'Space':
-            input.value += ' ';
-            break;
+                input.value = input.value.slice(0, -1);
+                break;
             case 'Enter':
-            // Enter tugmasi bu yerda e'tiborga olinmaydi, chunki modalda submit tugmasi bor
-            break;
+                sendEmail();
+                break;
             case 'CAPS':
-            isUpperCase = !isUpperCase;
-            renderKeyboard();
-            break;
-            case 'CLOSE':
-            document.getElementById('virtual-keyboard').style.display = 'none';
-            break;
+                isUpperCase = !isUpperCase;
+                renderKeyboard();
+                break;
             default:
-            const charToAdd = isUpperCase ? key.toUpperCase() : key;
-            input.value += charToAdd;
-            break;
+                input.value += isUpperCase ? key.toUpperCase() : key;
+                break;
         }
-
         input.focus();
     }
-</script>
-<script>
-    let inactivityTime = 0;
 
-    // Harakat kuzatuvchi eventlar
+    // === Inactivity Timer ===
+    let inactivityTime = 0;
     document.addEventListener('mousemove', resetTimer);
     document.addEventListener('click', resetTimer);
     document.addEventListener('scroll', resetTimer);
@@ -493,85 +624,73 @@
 
     setInterval(() => {
         inactivityTime++;
-
         if (inactivityTime === 60) {
             window.location.href = "{{ route('welcome') }}";
         }
-
     }, 1000);
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        const langSelectBtn = document.getElementById('lang-select-btn');
-        const langDropdown = document.getElementById('lang-dropdown');
-        const selectedFlag = document.getElementById('selected-flag');
-        const selectedLangText = document.getElementById('selected-lang-text');
-        const scrollToTopBtn = document.getElementById('scrollToTopBtn'); 
 
-        langSelectBtn.addEventListener('click', function() {
-            langDropdown.classList.toggle('show');
-        });
+    // === Scroll to Top ===
+    const scrollBtn = document.getElementById('scrollToTopBtn');
+    window.onscroll = () => {
+        scrollBtn.style.display = (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) ? 'block' : 'none';
+    };
 
-        langDropdown.addEventListener('click', function(event) {
-            const target = event.target.closest('li');
-            if (!target) return;
-
-            const lang = target.getAttribute('data-lang');
-            const flagSrc = target.getAttribute('data-flag');
-
-            // Tanlangan flag va tilni yangilash
-            selectedFlag.src = flagSrc;
-            selectedLangText.textContent = lang.toUpperCase();
-            langDropdown.classList.remove('show');
-
-            // Laravel routiga so‘rov yuborish:
-            window.location.href = `/lang/${lang}`;
-        });
-
-        // Dropdown tashqarisiga bosilganda yopish
-        document.addEventListener('click', function(event) {
-            if (!langSelectBtn.contains(event.target) && !langDropdown.contains(event.target)) {
-                langDropdown.classList.remove('show');
-            }
-        });
-
-        // YANGI: Scroll funksiyasini yuklash
-        window.onscroll = function() {
-            scrollFunction();
-        };
-
-        function scrollFunction() {
-            // 300px dan ko'proq pastga aylantirilganda tugmani ko'rsatish
-            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                scrollToTopBtn.style.display = "block";
-            } else {
-                scrollToTopBtn.style.display = "none";
-            }
-        }
-    });
-
-    // YANGI: Sahifani yuqoriga aylantirish funksiyasi
     function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth' 
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    let selectedEvent = {};
+    // === Language Switcher ===
+    document.addEventListener('DOMContentLoaded', () => {
+        const langBtn = document.getElementById('lang-select-btn');
+        const dropdown = document.getElementById('lang-dropdown');
+        const flag = document.getElementById('selected-flag');
+        const text = document.getElementById('selected-lang-text');
 
-    function openEmailModal(id, title_uz, date, location, description_uz, image) {
-        selectedEvent = { id, title_uz, date, location, description_uz, image };
+        langBtn.addEventListener('click', () => dropdown.classList.toggle('show'));
+        dropdown.addEventListener('click', (e) => {
+            const li = e.target.closest('li');
+            if (!li) return;
+            flag.src = li.dataset.flag;
+            text.textContent = li.dataset.lang.toUpperCase();
+            dropdown.classList.remove('show');
+            window.location.href = `/lang/${li.dataset.lang}`;
+        });
 
-        document.getElementById('modalMaterialName').textContent = title_uz;
-        document.getElementById('modalMaterialDescription').textContent = description_uz;
+        document.addEventListener('click', (e) => {
+            if (!langBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    });
+
+    // === Modal & Email ===
+    let selectedEventId = null;
+
+    function openEmailModal(id, title, description) {
+        selectedEventId = id;
+        document.getElementById('modalMaterialName').textContent = title;
+        document.getElementById('modalMaterialDescription').textContent = description;
         document.getElementById('emailModal').classList.add('show');
         document.body.style.overflow = 'hidden';
+        document.getElementById('emailInput').value = '';
+        hideKeyboard();
     }
 
     function closeModal() {
         document.getElementById('emailModal').classList.remove('show');
         document.body.style.overflow = 'auto';
         document.getElementById('emailInput').value = '';
+        hideKeyboard();
+    }
+
+    function openSuccessModal() {
+        document.getElementById('successModal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSuccessModal() {
+        document.getElementById('successModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
     }
 
     function showLoadingAnimation() {
@@ -585,49 +704,44 @@
     }
 
     async function sendEmail() {
-        const email = document.getElementById('emailInput').value;
-        if (!email) return alert('Iltimos, email manzilni kiriting');
+        const email = document.getElementById('emailInput').value.trim();
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            alert('Iltimos, to\'g\'ri email kiriting');
+            return;
+        }
 
-        closeModal(); // Close email modal immediately
-        showLoadingAnimation(); // Show loading animation
+        closeModal();
+        showLoadingAnimation();
+
+        const lang = document.getElementById('selected-lang-text').textContent.toLowerCase();
 
         try {
-            const response = await fetch("{{ route('send.event') }}", {
+            const res = await fetch("{{ route('send.event') }}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').content
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 },
-                body: JSON.stringify({
-                    email,
-                    event: selectedEvent
-                })
+                body: JSON.stringify({ email, event_id: selectedEventId, lang })
             });
 
-            hideLoadingAnimation(); // Hide loading animation
+            hideLoadingAnimation();
 
-            if (response.ok) {
+            if (res.ok) {
                 openSuccessModal();
-                // 3 soniyadan keyin avtomatik yopish
                 setTimeout(closeSuccessModal, 3000);
             } else {
-                alert('Email yuborishda xatolik yuz berdi');
+                const err = await res.json();
+                alert('Xatolik: ' + (err.error || 'Server xatosi'));
             }
         } catch (error) {
-            hideLoadingAnimation(); // Hide loading animation on error
-            alert('Email yuborishda xatolik yuz berdi');
+            hideLoadingAnimation();
+            alert('Internet aloqasi yo\'q');
         }
     }
 
-    function openSuccessModal() {
-        document.getElementById('successModal').classList.add('show');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeSuccessModal() {
-        document.getElementById('successModal').classList.remove('show');
-        document.body.style.overflow = 'auto';
-    }
+    // Input fokusda – klaviatura chiqadi
+    document.getElementById('emailInput').addEventListener('focus', showKeyboard);
 </script>
 </body>
 </html>
